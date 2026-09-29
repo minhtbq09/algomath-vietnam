@@ -1,3 +1,74 @@
+# AlgoMath Vietnam
+
+A free, bilingual learning site that connects Mathematical Olympiad thinking to computer science, written for students in grades 9 to 11.
+
+The premise: students who already know induction, invariants, congruences and counting are not missing a new ability when they meet algorithms. They are missing a second language for what they already understand. Every lesson starts from a familiar mathematics problem and ends with runnable code.
+
+Vietnamese lives at `/vi/`, English at `/en/`.
+
+## What is in here
+
+| | |
+| --- | --- |
+| Lessons | 20, in Vietnamese and English, grouped into 5 chapters |
+| Interactive simulations | 10, all step-forward, step-back and self-explaining |
+| Exercises | 44, bilingual, each with a hint and a worked solution |
+| Workshops | 3 session plans with agendas and pre/post-test structure |
+
+Every lesson follows the same six steps: an opening problem, the mathematical idea behind it, how that idea becomes an algorithm, a simulation, pseudocode and Python, then exercises.
+
+## Running it locally
+
+Requires Node.js 20 or newer.
+
+```bash
+npm install
+npm run dev      # open http://localhost:3000
+npm run build    # writes a static site into out/
+```
+
+## Deploying
+
+The site exports to pure static HTML. No server, no database, no user accounts, no running costs. Pick one of two routes.
+
+### Option 1: GitHub Pages
+
+A workflow is already included at `.github/workflows/deploy.yml`.
+
+1. Push the code to GitHub on the `main` branch
+2. In the repository, open **Settings** then **Pages**
+3. Under **Source**, choose **GitHub Actions** instead of "Deploy from a branch"
+4. Wait about two minutes; the site address appears on that same page
+
+Step 3 is the one people miss. Leaving it on "Deploy from a branch" means the workflow runs successfully but the site never updates.
+
+After that, every push to `main` rebuilds the site automatically.
+
+The workflow works out where the site is served from on its own:
+
+| Repository name | Site address | Base path |
+| --- | --- | --- |
+| `<account>.github.io` | `https://<account>.github.io/` | none |
+| any other name | `https://<account>.github.io/<repo>/` | `/<repo>` |
+
+You do not need to act on this table. It is here so the behaviour is not a mystery when you see `/<repo>/` in the URL.
+
+To reproduce a GitHub Pages build locally, replace `algomath-vietnam` with the real repository name:
+
+```bash
+# Windows PowerShell
+$env:NEXT_PUBLIC_BASE_PATH="/algomath-vietnam"; npm run build
+
+# macOS or Linux
+NEXT_PUBLIC_BASE_PATH=/algomath-vietnam npm run build
+```
+
+Two files must stay in place. Do not delete either:
+
+- `public/.nojekyll`: without it, GitHub Pages runs Jekyll, which ignores any directory starting with an underscore. That silently removes `_next`, and the site loads as unstyled plain text.
+- `.github/workflows/deploy.yml`: the build and deploy pipeline itself.
+
+### Option 2: Vercel
 Go to vercel.com, choose Import Project and point it at the repository. Vercel detects Next.js by itself. No configuration, no environment variables. The site sits at the domain root, so there is no sub-path to worry about.
 
 Vercel is slightly simpler and gives a tidier URL. GitHub Pages keeps the source and the live site in one place, which is convenient if you want to manage everything from a single account.
