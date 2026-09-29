@@ -1,0 +1,79 @@
+---
+title: BFS and distance in steps
+---
+
+## 1. Opening problem
+
+> From one cell of a maze, point out every cell exactly 1 step away, then every cell exactly 2 steps away, then 3.
+
+The question is so easy it hardly looks like a problem. But notice how you just answered it in your head: you did not wander about counting. You **swept by layer**, finishing layer 1 before starting layer 2.
+
+That reflex is this lesson's algorithm. All that remains is writing it down precisely.
+
+## 2. The mathematical idea
+
+Let $L_k$ be the set of cells exactly $k$ steps from the start. Three statements:
+
+- $L_0 = \{s\}$, the starting cell alone.
+- Every cell in $L_{k+1}$ is adjacent to at least one cell in $L_k$.
+- If a cell is adjacent to one in $L_k$ and has **not** appeared in any earlier layer, it belongs to $L_{k+1}$.
+
+The third is where people slip. Why is "not seen before" needed? Because a cell already in $L_2$ is at distance 2, and the fact that it also touches a cell in $L_5$ does not push it further away. **The first time you reach a cell is the shortest way there.**
+
+The layers $L_0, L_1, L_2, \dots$ partition the reachable cells: each cell sits in exactly one. This is the structure you met when working with equivalence relations.
+
+## 3. Turning it into an algorithm
+
+To make a machine sweep by layer we need a mechanism guaranteeing that every cell in layer $k$ is processed before any cell in layer $k+1$.
+
+The data structure that does exactly that is the **queue**: first in, first out, like a line for tickets. Since layer-$k$ cells enter the queue before layer-$(k+1)$ cells, they also leave first.
+
+<Note>
+That is the entire secret of BFS. Not a clever trick, just choosing the data structure that maintains layer order automatically. Swap the queue for a stack and the algorithm still runs and still visits everything, but the numbers on the cells stop being shortest distances. Lesson 11 covers that case; its name is DFS.
+</Note>
+
+The steps:
+
+1. Set $d[s] = 0$ and put $s$ in the queue.
+2. While the queue is not empty, take the cell $u$ at its front.
+3. For each neighbour $v$ of $u$: if $d[v]$ is unset, set $d[v] = d[u] + 1$ and put $v$ at the back of the queue.
+4. When the queue empties, every reachable cell carries its correct shortest distance.
+
+## 4. Simulation
+
+Step through one press at a time and watch the Queue column on the right. Pause exactly when the first 3 appears and ask yourself why no cell shows 4 yet.
+
+<Viz name="bfs" />
+
+Toggle "Show step count" to see the colour layers clearly. Use the left and right arrow keys to move faster.
+
+## 5. Pseudocode and Python
+
+```python
+from collections import deque
+
+def bfs(grid, start):
+    R, C = len(grid), len(grid[0])
+    d = {start: 0}
+    queue = deque([start])
+
+    while queue:
+        r, c = queue.popleft()             # take from the FRONT
+        for dr, dc in ((-1,0), (0,1), (1,0), (0,-1)):
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < R and 0 <= nc < C \
+               and grid[nr][nc] != '#' and (nr, nc) not in d:
+                d[(nr, nc)] = d[(r, c)] + 1
+                queue.append((nr, nc))     # add at the BACK
+    return d
+```
+
+The two commented lines decide everything. Change `popleft()` to `pop()` and BFS becomes DFS, and every number in `d` loses its meaning as a distance.
+
+Complexity: each cell enters the queue once and each edge is examined twice, so the cost is $O(V + E)$, linear in the size of the graph.
+
+## 6. What to take away
+
+BFS looks like a maze algorithm, but the maze is only a drawing. Any problem of the form "fewest steps from this state to that state, each step costing the same" is BFS, once you define what a state is and what a step is.
+
+The final exercises show you that with a knight on a chessboard, and with a maze where you may break exactly one wall.

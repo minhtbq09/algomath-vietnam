@@ -1,0 +1,92 @@
+---
+title: Logic, chứng minh và tính đúng đắn
+---
+
+## 1. Bài toán mở đầu
+
+> Trên bảng có các số 1, 2, 3, ..., 100. Mỗi bước, bạn xoá hai số bất kỳ rồi viết lên hiệu của chúng, tức số lớn trừ số nhỏ. Làm mãi cho tới khi còn đúng một số. Số cuối cùng có thể là số chẵn không?
+
+Đừng thử từng trường hợp. Số cách xoá lớn tới mức không ai đếm nổi. Nhưng câu trả lời tìm được trong ba dòng.
+
+Tổng ban đầu là $1 + 2 + \dots + 100 = 5050$, một số chẵn. Mỗi bước thay hai số $a$ và $b$ bằng $|a - b|$, nên tổng đổi từ $a + b$ thành $a - b$, tức giảm đi $2b$ nếu $a > b$. Giảm đi một số chẵn thì **tính chẵn lẻ của tổng không đổi**.
+
+Vậy tổng luôn chẵn. Khi còn đúng một số, số đó chính là tổng, nên nó phải chẵn. Câu trả lời là có, và hơn thế: nó **bắt buộc** phải chẵn.
+
+## 2. Ý tưởng Toán
+
+Bạn vừa dùng một **bất biến**: một đại lượng không đổi qua mọi bước biến đổi.
+
+Sức mạnh của bất biến nằm ở chỗ nó cho phép kết luận về trạng thái cuối mà không cần biết đường đi nào đã được chọn. Với 100 số, số cách xoá là thiên văn, nhưng mọi đường đi đều bảo toàn tính chẵn lẻ, nên mọi đường đi đều dẫn tới cùng kết luận.
+
+Cấu trúc một chứng minh bằng bất biến luôn gồm ba phần:
+
+1. **Khởi tạo.** Bất biến đúng ở trạng thái ban đầu.
+2. **Bảo toàn.** Nếu bất biến đúng trước một bước thì nó vẫn đúng sau bước đó.
+3. **Kết thúc.** Bất biến cộng với điều kiện dừng cho ra kết luận cần chứng minh.
+
+<Note>
+Ba phần này giống hệt cấu trúc quy nạp toán học, và đó không phải trùng hợp. Bất biến chính là quy nạp áp dụng cho số bước đã thực hiện.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Đây là chỗ bất ngờ: **ba phần trên chính là cách chứng minh một vòng lặp chạy đúng**.
+
+Xem lại thuật toán tìm số lớn nhất từ bài 1:
+
+```python
+def lon_nhat(a):
+    m = a[0]
+    for x in a[1:]:
+        if x > m:
+            m = x
+    return m
+```
+
+Bất biến của nó là: *sau khi xét xong $k$ phần tử đầu, $m$ bằng giá trị lớn nhất trong $k$ phần tử đó.*
+
+- **Khởi tạo.** Sau khi xét 1 phần tử, $m = a_0$ đúng là lớn nhất trong một phần tử.
+- **Bảo toàn.** Giả sử $m$ lớn nhất trong $k$ phần tử đầu. Xét phần tử thứ $k+1$. Nếu nó lớn hơn $m$ thì nó là lớn nhất trong $k+1$ phần tử, và ta gán $m$ bằng nó. Nếu không thì $m$ vẫn là lớn nhất. Cả hai nhánh đều giữ bất biến.
+- **Kết thúc.** Vòng lặp dừng khi $k = n$, lúc đó $m$ là lớn nhất trong toàn dãy, đúng điều cần trả về.
+
+Chứng minh xong, không cần chạy thử một trường hợp nào.
+
+Đây là ranh giới giữa "code chạy đúng với các test tôi nghĩ ra" và "code đúng". Test chỉ cho biết thuật toán không sai ở những chỗ bạn đã thử. Bất biến cho biết nó không sai ở đâu cả.
+
+## 4. Mô phỏng
+
+Mở lại [mô phỏng Euclid](/vi/visualizations/euclid/) và tự tìm bất biến của nó. Gợi ý: đại lượng nào không đổi qua mỗi dòng chia có dư? Đọc kỹ câu giải thích ở mỗi bước, nó đang phát biểu chính bất biến đó.
+
+## 5. Pseudocode và Python
+
+Thói quen tốt là viết bất biến thành ghi chú ngay trong code:
+
+```python
+def tim_kiem_nhi_phan(a, x):
+    lo, hi = 0, len(a) - 1
+    # BẤT BIẾN: nếu x có trong a thì chỉ số của nó nằm trong [lo, hi]
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == x:
+            return mid
+        elif a[mid] < x:
+            lo = mid + 1   # a[lo..mid] đều < x, loại đi không mất nghiệm
+        else:
+            hi = mid - 1   # a[mid..hi] đều > x, loại đi không mất nghiệm
+    # lo > hi: khoảng rỗng, nên x không có trong a
+    return -1
+```
+
+Hai dòng ghi chú bên trong giải thích vì sao mỗi phép loại bỏ là hợp lệ. Nếu bạn không viết được một câu như thế cho một dòng code, rất có thể dòng đó sai.
+
+## 6. Điều đáng nhớ
+
+Ba câu hỏi cần trả lời cho mọi vòng lặp bạn viết:
+
+| Câu hỏi | Nó bảo đảm điều gì |
+| --- | --- |
+| Đại lượng nào luôn đúng ở mỗi vòng? | Tính đúng đắn |
+| Đại lượng nào luôn giảm? | Tính dừng |
+| Khi dừng, bất biến cho biết gì? | Kết quả trả về đúng |
+
+Bạn đã trả lời loại câu hỏi này suốt trong các bài Toán tổ hợp. Chỉ là chưa ai nói với bạn rằng đó cũng là cách kiểm tra một chương trình.

@@ -1,0 +1,75 @@
+---
+title: Thuật toán là gì?
+---
+
+## 1. Bài toán mở đầu
+
+Hãy giải bài này trong đầu trước khi đọc tiếp.
+
+> Có 8 đồng xu giống hệt nhau, trong đó đúng một đồng nhẹ hơn. Bạn có một cân thăng bằng. Tìm đồng nhẹ bằng ít lần cân nhất.
+
+Gần như ai cũng ra được đáp án 2 lần: chia 8 đồng thành ba nhóm 3, 3, 2. Cân hai nhóm 3 với nhau. Nếu lệch thì đồng nhẹ nằm trong nhóm 3 nhẹ hơn, lần cân thứ hai chia nhóm đó thành 1, 1, 1. Nếu cân bằng thì đồng nhẹ nằm trong nhóm 2, lần thứ hai cân hai đồng đó.
+
+Bạn vừa nghĩ ra một thuật toán. Nhưng lời giải ở trên **chưa phải** là thuật toán, và khoảng cách giữa hai thứ đó chính là nội dung của bài này.
+
+## 2. Ý tưởng Toán
+
+Điều làm lời giải trên đúng không phải là sự khéo léo. Nó là một tính chất đếm được:
+
+Mỗi lần cân thăng bằng cho ba kết quả có thể xảy ra: nghiêng trái, nghiêng phải, hoặc cân bằng. Sau $k$ lần cân bạn phân biệt được nhiều nhất $3^k$ khả năng. Vì $3^1 = 3 < 8 \le 9 = 3^2$, không cách nào làm được với 1 lần cân, và 2 lần là đủ nếu bạn chia khéo.
+
+Đây là kiểu lập luận bạn đã quen ở lớp chuyên: đếm số khả năng, so với số thông tin thu được, rồi kết luận cận dưới. Nó trả lời câu hỏi *tại sao đáp án là 2*.
+
+Nhưng nó chưa trả lời câu hỏi *làm thế nào để một cái máy cũng làm được*.
+
+## 3. Chuyển thành thuật toán
+
+Thử đưa lời giải trên cho một người máy làm theo. Ngay lập tức xuất hiện những chỗ mơ hồ mà con người tự lấp đầy:
+
+- "Chia thành ba nhóm 3, 3, 2" — nhóm nào gồm những đồng nào? Người máy cần một quy tắc, ví dụ đánh số 1 đến 8 rồi lấy {1,2,3}, {4,5,6}, {7,8}.
+- "Nếu lệch thì đồng nhẹ nằm trong nhóm nhẹ hơn" — người máy cần biết nó phải *nhớ* nhóm nào đang được xét, chứ không phải chỉ ra bằng tay.
+- "Lần cân thứ hai chia nhóm đó thành 1, 1, 1" — nếu nhóm đang xét có 2 đồng thì bước này làm gì? Lời giải của con người tự hiểu; người máy thì không.
+
+Một **thuật toán** là mô tả thoả ba yêu cầu:
+
+1. **Xác định.** Mỗi bước chỉ có đúng một cách hiểu. Không có chỗ nào cần đoán ý.
+2. **Hữu hạn.** Với mọi đầu vào hợp lệ, nó dừng sau hữu hạn bước.
+3. **Đúng.** Khi dừng, kết quả trả về đúng là thứ đề bài yêu cầu.
+
+<Note>
+Ba yêu cầu này nghe hiển nhiên, nhưng chúng loại bỏ rất nhiều thứ trông giống thuật toán. "Chia đôi khoảng cho tới khi tìm được nghiệm" vi phạm điều kiện hữu hạn nếu nghiệm là số vô tỉ. "Chọn số phù hợp nhất" vi phạm tính xác định nếu không nói rõ phù hợp nghĩa là gì.
+</Note>
+
+Viết lại lời giải đồng xu cho đúng chuẩn:
+
+1. Đánh số các đồng từ 1 đến 8. Đặt tập đang xét $S = \{1, \dots, 8\}$.
+2. Nếu $|S| = 1$, trả về phần tử duy nhất và dừng.
+3. Chia $S$ thành ba phần $A$, $B$, $C$ với $|A| = |B| = \lceil |S| / 3 \rceil$ và $C$ là phần còn lại.
+4. Cân $A$ với $B$. Nếu $A$ nhẹ hơn, đặt $S \leftarrow A$. Nếu $B$ nhẹ hơn, đặt $S \leftarrow B$. Nếu bằng nhau, đặt $S \leftarrow C$.
+5. Quay lại bước 2.
+
+Bây giờ mọi bước đều xác định. Nó chắc chắn dừng vì $|S|$ giảm thật sự sau mỗi vòng. Và nó đúng vì đồng nhẹ luôn nằm trong $S$, tính chất này đúng ở bước 1 và được bước 4 giữ nguyên. Tính chất "luôn đúng ở mọi vòng lặp" đó có tên riêng là **bất biến**, và bài 2 sẽ dành hẳn cho nó.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Bạn có thể xem trước [thuật toán Euclid](/vi/visualizations/euclid/), nơi cùng một cấu trúc lặp xuất hiện dưới dạng số học: mỗi vòng thay bài toán bằng một bài toán nhỏ hơn cho tới khi không thể nhỏ hơn nữa.
+
+## 5. Pseudocode và Python
+
+```python
+def tim_dong_nhe(S, can):
+    """S là danh sách chỉ số đồng xu.
+    can(A, B) trả về -1 nếu A nhẹ hơn, 1 nếu B nhẹ hơn, 0 nếu bằng."""
+    while len(S) > 1:
+        k = (len(S) + 2) // 3          # kích thước mỗi nhóm cân
+        A, B, C = S[:k], S[k:2*k], S[2*k:]
+        kq = can(A, B)
+        S = A if kq == -1 else B if kq == 1 else C
+    return S[0]
+```
+
+Đọc kỹ dòng `S = A if ... else B if ... else C`. Nó chính là bước 4 ở trên, không thêm không bớt. Khi bạn đã viết được các bước rõ ràng thì việc chuyển sang code là phần dễ nhất.
+
+## 6. Điều đáng nhớ
+
+Bạn không thiếu tư duy thuật toán. Bạn vẫn dùng nó mỗi khi giải một bài Toán có nhiều trường hợp. Thứ bạn cần bổ sung là thói quen viết lời giải ra theo cách **không cho phép người đọc tự hiểu ngầm** bất cứ điều gì.

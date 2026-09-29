@@ -1,0 +1,86 @@
+---
+title: Biểu diễn đồ thị
+---
+
+## 1. Bài toán mở đầu
+
+> Bạn cần lưu một đồ thị 1000 đỉnh vào máy tính để trả lời hai loại câu hỏi: "đỉnh u và v có nối nhau không" và "liệt kê mọi đỉnh kề với u". Lưu thế nào?
+
+Câu hỏi nghe có vẻ kỹ thuật, nhưng nó thực chất là một bài toán đánh đổi, và bài toán đó có bản chất toán học.
+
+## 2. Ý tưởng Toán
+
+Có hai cách mô tả một quan hệ, và bạn đã dùng cả hai.
+
+**Cách 1: bảng.** Kẻ một bảng vuông $n \times n$, ô $(i, j)$ ghi 1 nếu $i$ nối $j$, ghi 0 nếu không. Đây là **ma trận kề**.
+
+**Cách 2: liệt kê.** Với mỗi đỉnh, viết ra danh sách những đỉnh nối với nó. Đây là **danh sách kề**.
+
+Hai cách chứa đúng cùng một thông tin, nhưng chi phí khác hẳn nhau. Gọi $n$ là số đỉnh và $m$ là số cạnh:
+
+| | Ma trận kề | Danh sách kề |
+| --- | --- | --- |
+| Bộ nhớ | $O(n^2)$ | $O(n + m)$ |
+| Hỏi u và v có nối nhau | $O(1)$ | $O(\deg u)$ |
+| Duyệt mọi đỉnh kề u | $O(n)$ | $O(\deg u)$ |
+| Duyệt mọi cạnh | $O(n^2)$ | $O(n + m)$ |
+
+Không cách nào tốt hơn hoàn toàn. Việc chọn phụ thuộc vào **$m$ lớn cỡ nào so với $n^2$**.
+
+Một đồ thị đơn $n$ đỉnh có nhiều nhất $\binom{n}{2} = \frac{n(n-1)}{2}$ cạnh. Nếu $m$ gần con số đó thì đồ thị gọi là **dày**, và ma trận kề hợp lý. Nếu $m$ nhỏ hơn nhiều, chẳng hạn $m = O(n)$, thì đồ thị **thưa** và ma trận kề lãng phí khủng khiếp.
+
+<Note>
+Con số cụ thể để bạn thấy độ chênh. Đồ thị 10000 đỉnh với 30000 cạnh, một mạng xã hội thu nhỏ. Ma trận kề cần $10^8$ ô, tức khoảng 100 MB nếu mỗi ô 1 byte, và 99,97% số ô là số 0. Danh sách kề cần khoảng 60000 số, dưới 1 MB. Chọn sai ở đây không làm chương trình chậm đi, nó làm chương trình không chạy được.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Quy tắc thực dụng:
+
+- Đồ thị thưa, tức $m \ll n^2$, dùng **danh sách kề**. Đây là trường hợp của hầu hết bài toán thực tế: bản đồ đường, mạng xã hội, mê cung.
+- Đồ thị dày, hoặc cần hỏi "u nối v không" rất nhiều lần, dùng **ma trận kề**.
+- Cần lưu trọng số cạnh thì cả hai đều làm được: ma trận ghi trọng số thay cho số 1, danh sách kề lưu cặp (đỉnh, trọng số).
+
+Với lưới ô vuông như mê cung ở bài 10, có cách thứ ba còn tiết kiệm hơn: **không lưu cạnh gì cả**. Các ô kề của ô $(r, c)$ tính được ngay từ toạ độ, chỉ cần bốn phép cộng. Đây là lý do mô phỏng BFS chỉ giữ lưới ký tự mà không có danh sách kề nào.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Trong [mô phỏng BFS](/vi/visualizations/bfs/), hãy để ý rằng đồ thị hoàn toàn không được lưu ở đâu cả: mỗi lần cần các ô kề, thuật toán tính lại từ toạ độ. Đó là cách biểu diễn ngầm mà mục 3 vừa nói tới.
+
+## 5. Pseudocode và Python
+
+```python
+n = 5
+canh = [(0, 1), (0, 2), (1, 3), (2, 3), (3, 4)]
+
+# Ma trận kề
+ma_tran = [[0] * n for _ in range(n)]
+for u, v in canh:
+    ma_tran[u][v] = 1
+    ma_tran[v][u] = 1        # đồ thị vô hướng: ghi cả hai chiều
+
+# Danh sách kề
+ke = [[] for _ in range(n)]
+for u, v in canh:
+    ke[u].append(v)
+    ke[v].append(u)
+
+print(ma_tran[0][1])   # 1, hỏi tức thì
+print(ke[3])           # [1, 2, 4], duyệt chỉ đúng số đỉnh kề
+```
+
+Với lưới, không cần cấu trúc nào:
+
+```python
+def cac_o_ke(r, c, R, C, luoi):
+    for dr, dc in ((-1, 0), (0, 1), (1, 0), (0, -1)):
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < R and 0 <= nc < C and luoi[nr][nc] != '#':
+            yield nr, nc
+```
+
+## 6. Điều đáng nhớ
+
+Cùng một đối tượng toán học, hai cách lưu, chi phí chênh nhau hàng trăm lần. Đây là lần đầu trong chương trình bạn gặp một sự thật sẽ lặp lại mãi: **cách bạn lưu dữ liệu quyết định thuật toán nào chạy nhanh**.
+
+Câu hỏi cần đặt trước khi viết code không phải "thuật toán nào", mà là "dữ liệu sẽ được hỏi theo kiểu gì".

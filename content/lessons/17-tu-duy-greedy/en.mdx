@@ -1,0 +1,76 @@
+---
+title: Greedy thinking
+---
+
+## 1. Opening problem
+
+> You have notes of 1000, 2000, 5000, 10000, 20000, 50000 and 100000. Pay exactly 87000 using as few notes as possible. How?
+
+You do it without thinking: one 50000, then 20000, then 10000, then 5000, then 2000. Five notes.
+
+The rule you just used has a name: at each step take the largest note that still fits. That is **greedy**.
+
+The real question of this lesson is not "how" but "**why does that give an optimal answer**", and lesson 18 will show that sometimes it does not.
+
+## 2. The mathematical idea
+
+A greedy algorithm makes the locally best choice at each step, never looking ahead. It is correct when the problem has two properties:
+
+**Property 1: the greedy choice is safe.** There exists an optimal solution containing the first greedy choice.
+
+**Property 2: optimal substructure.** After that choice, what remains is a problem of the same kind, and its optimal solution combined with the first choice is globally optimal.
+
+The way to prove Property 1 is an **exchange argument**: take any optimal solution and show how to modify it to contain the greedy choice without making it worse.
+
+Try it on the activity selection problem: given $n$ activities with start and finish times, choose as many as possible with no overlaps.
+
+The greedy rule: **take the activity that finishes earliest**.
+
+Exchange proof. Let $g$ be the earliest-finishing activity and $S$ any optimal solution. If $g \in S$, done. Otherwise let $f$ be the earliest-finishing activity in $S$. Since $g$ finishes no later than $f$, replacing $f$ by $g$ still overlaps nothing else in $S$. The new set has the same size, is still optimal, and contains $g$.
+
+<Note>
+Note the shape of that argument. We did not prove the greedy solution is the only optimal one. We proved it is **also** optimal, by nudging an arbitrary optimal solution towards it at no cost. This proof template works for every greedy problem.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Greedy almost always takes the form: **sort by some criterion, then sweep once**.
+
+The hard part is not the code but choosing the right criterion. For activity selection, three criteria all look reasonable:
+
+| Criterion | Optimal? |
+| --- | --- |
+| Earliest start | No. An activity starting early but running all day blocks everything |
+| Shortest duration | No. A short activity straddling two others eliminates both |
+| Earliest finish | Yes, proved in section 2 |
+
+Three nearly identical pieces of code, one correct and two wrong. That is why this lesson spends most of its length on the proof rather than the code.
+
+## 4. Simulation
+
+This lesson has no simulation of its own. You can check it on paper: draw the activities as segments on a time line and try all three criteria from section 3 on the same data. The two wrong criteria fail on examples with about 4 activities.
+
+## 5. Pseudocode and Python
+
+```python
+def select_activities(activities):
+    """activities is a list of (start, finish) pairs."""
+    activities = sorted(activities, key=lambda x: x[1])   # earliest finish first
+    chosen = []
+    free_at = 0
+    for start, finish in activities:
+        if start >= free_at:
+            chosen.append((start, finish))
+            free_at = finish
+    return chosen
+```
+
+The complexity is $O(n \log n)$, dominated by the sort.
+
+## 6. What to take away
+
+Greedy is the easiest algorithm to write and the hardest to prove in the whole course.
+
+A wrong greedy rule still produces an answer, still runs fast, and is still correct on most data you try. It only fails on the cases you did not think of. So the rule is: **do not use greedy until you can prove it**, or at least until you have seriously tried to find a counterexample.
+
+Lesson 18 is devoted entirely to finding that counterexample.

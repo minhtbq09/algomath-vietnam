@@ -1,0 +1,89 @@
+---
+title: Backtracking through counting and mazes
+---
+
+## 1. Opening problem
+
+> Place 8 queens on an 8×8 board so that none attacks another. How many ways are there?
+
+The naive method: try every way of choosing 8 squares out of 64. That is $\binom{64}{8} = 4{,}426{,}165{,}368$, over four billion. A machine can do it, but it takes minutes and does not scale to larger boards.
+
+Your own method when solving by hand: put a queen in column 1, move to column 2 and try the legal squares, and when stuck go back and change the previous column. That method examines about 15000 states, three hundred thousand times fewer.
+
+## 2. The mathematical idea
+
+Two observations turn four billion into fifteen thousand.
+
+**Observation 1: structured enumeration.** Each column holds exactly one queen, since two in a column attack. So an arrangement is a sequence $(r_1, r_2, \dots, r_8)$ where $r_i$ is the row in column $i$. That gives $8^8 = 16{,}777{,}216$ sequences, already 260 times fewer just from seeing the problem correctly.
+
+Adding the no-shared-row condition makes the $r_i$ pairwise distinct, leaving $8! = 40{,}320$.
+
+**Observation 2: pruning.** This is the main idea. If the queens in columns 1 and 2 already attack each other, then **every** arrangement of the remaining 6 is doomed. Not one of them needs testing.
+
+A single prune at column 2 eliminates $8^6 = 262{,}144$ arrangements. The earlier the prune, the smaller the search tree.
+
+<Note>
+This is exactly the reasoning you use in constrained counting problems: rather than counting everything and subtracting, you build up and reject the moment a condition breaks. Backtracking is that habit turned into an algorithm.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Backtracking has four parts, and this template fits nearly every enumeration problem:
+
+1. **State.** The partial solution built so far, here the columns already filled.
+2. **Choices.** The legal next moves.
+3. **Pruning.** A condition detecting a doomed state, stopping immediately.
+4. **Undo.** After trying one choice, remove it so another can be tried.
+
+Part 4 is the most forgotten and also the one that names the algorithm. Without undoing, branches contaminate each other and the results are wrong in ways that are very hard to trace.
+
+An important point: backtracking does **not** change the worst-case complexity. It is still exhaustive search. What it does is skip regions guaranteed to contain no solution, and in practice that is usually enough to turn an impossible problem into an instant one.
+
+## 4. Simulation
+
+Yellow is the square being tried, red is one just rejected, and the shaded cells are those covered by placed queens.
+
+<Viz name="queens" />
+
+Watch the "Branches pruned" counter on the right. Each prune in an early column removes thousands of arrangements the algorithm never has to touch. Compare the final "States visited" figure with the blind arrangement count to see the gap.
+
+## 5. Pseudocode and Python
+
+```python
+def n_queens(n):
+    rows = []          # rows[c] = the row of the queen in column c
+    count = 0
+
+    def attacks(r, c):
+        for c2, r2 in enumerate(rows):
+            if r2 == r or abs(r2 - r) == abs(c2 - c):
+                return True         # same row or same diagonal
+        return False
+
+    def place(c):
+        nonlocal count
+        if c == n:
+            count += 1              # n queens placed, record a solution
+            return
+        for r in range(n):
+            if attacks(r, c):
+                continue            # PRUNE: skip the whole subtree
+            rows.append(r)          # choose
+            place(c + 1)            # go deeper
+            rows.pop()              # UNDO: remove the choice
+
+    place(0)
+    return count
+
+print(n_queens(8))    # 92
+```
+
+The three lines `rows.append` / `place` / `rows.pop` are the choose, recurse, undo template. You will write these same three lines in every backtracking problem, whether the task is generating permutations, solving Sudoku or finding a path in a maze.
+
+The `continue` after `attacks` is where four billion tests are saved.
+
+## 6. What to take away
+
+Backtracking is **disciplined enumeration**. It is exhaustive, but it skips every region already certain to fail.
+
+The question that decides efficiency is not "how do I code it" but "**where is the earliest point I can detect failure**". Pruning at column 2 saves hundreds of thousands of times more than pruning at column 7. For Sudoku, a good prune is the difference between milliseconds and hours.

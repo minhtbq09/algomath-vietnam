@@ -1,0 +1,87 @@
+---
+title: Đệ quy sinh ra từ quy nạp
+---
+
+## 1. Bài toán mở đầu
+
+> Chứng minh rằng $1 + 2 + \dots + n = \dfrac{n(n+1)}{2}$ với mọi số nguyên dương $n$.
+
+Bạn viết ngay: đúng với $n = 1$. Giả sử đúng với $n = k$, tức $1 + \dots + k = \frac{k(k+1)}{2}$. Khi đó
+
+$$1 + \dots + k + (k+1) = \frac{k(k+1)}{2} + (k+1) = \frac{(k+1)(k+2)}{2}$$
+
+đúng công thức với $n = k+1$. Xong.
+
+Bây giờ hãy nhìn lại chứng minh đó. Nó có **hai phần**: một trường hợp làm được ngay, và một quy tắc rút gọn trường hợp lớn về trường hợp nhỏ hơn.
+
+Đó chính xác là cấu trúc của một hàm đệ quy.
+
+## 2. Ý tưởng Toán
+
+Đặt hai thứ cạnh nhau:
+
+| Quy nạp toán học | Hàm đệ quy |
+| --- | --- |
+| Cơ sở: chứng minh cho $n = 1$ | Trường hợp cơ sở: trả về giá trị ngay |
+| Bước quy nạp: từ $k$ suy ra $k+1$ | Lời gọi đệ quy: dùng kết quả của $n-1$ |
+| Kết luận: đúng với mọi $n$ | Hàm chạy đúng với mọi $n$ |
+
+Đây không phải một phép ẩn dụ. Chứng minh rằng một hàm đệ quy trả về đúng **là** một chứng minh quy nạp, từng chữ một.
+
+Ví dụ, để chứng minh hàm
+
+```python
+def tong(n):
+    if n == 1:
+        return 1
+    return n + tong(n - 1)
+```
+
+trả về $\frac{n(n+1)}{2}$, bạn viết: đúng với $n = 1$ vì hàm trả về 1. Giả sử đúng với $n-1$, tức `tong(n-1)` trả về $\frac{(n-1)n}{2}$. Khi đó `tong(n)` trả về $n + \frac{(n-1)n}{2} = \frac{n(n+1)}{2}$. Xong.
+
+<Note>
+Vì hai thứ là một, mọi sai lầm quen thuộc trong quy nạp đều có bản sao trong đệ quy. Quên trường hợp cơ sở trong chứng minh thì mệnh đề không có điểm tựa; quên trường hợp cơ sở trong code thì hàm gọi chính nó mãi mãi cho tới khi tràn ngăn xếp. Cùng một lỗi, hai cách biểu hiện.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Viết một hàm đệ quy cần trả lời ba câu hỏi, theo đúng thứ tự:
+
+1. **Trường hợp cơ sở là gì?** Trường hợp nhỏ nhất mà bạn trả lời được ngay, không cần gọi lại chính mình.
+2. **Bài toán nhỏ hơn là gì?** Phải nhỏ hơn thật, theo một đại lượng nào đó luôn giảm. Đây chính là điều kiện dừng ở bài 1.
+3. **Ghép kết quả nhỏ thành kết quả lớn thế nào?**
+
+Áp dụng cho Tháp Hà Nội, chuyển $n$ đĩa từ cọc A sang cọc C dùng cọc B:
+
+1. Cơ sở: $n = 0$, không làm gì.
+2. Bài nhỏ hơn: chuyển $n-1$ đĩa.
+3. Ghép: chuyển $n-1$ đĩa trên từ A sang B, chuyển đĩa lớn nhất từ A sang C, chuyển $n-1$ đĩa từ B sang C.
+
+Số bước thoả $T(n) = 2T(n-1) + 1$ với $T(0) = 0$, giải ra $T(n) = 2^n - 1$. Bài 14 sẽ dạy cách giải các hệ thức kiểu này.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Hãy tự chạy tay hàm Tháp Hà Nội với $n = 3$ và viết ra cây các lời gọi. Bạn sẽ thấy nó có 7 lá, đúng bằng $2^3 - 1$ nước đi.
+
+## 5. Pseudocode và Python
+
+```python
+def ha_noi(n, tu, sang, tam):
+    if n == 0:
+        return
+    ha_noi(n - 1, tu, tam, sang)          # chuyển n-1 đĩa sang cọc tạm
+    print(f'Chuyển đĩa {n}: {tu} → {sang}')
+    ha_noi(n - 1, tam, sang, tu)          # chuyển n-1 đĩa từ cọc tạm sang đích
+
+ha_noi(3, 'A', 'C', 'B')
+```
+
+Điều đáng chú ý: bạn không cần hình dung 7 nước đi trong đầu để viết đoạn code này. Bạn chỉ cần tin rằng lời gọi `ha_noi(n-1, ...)` làm đúng việc của nó. Niềm tin đó chính là giả thiết quy nạp.
+
+Khả năng viết code mà không cần tưởng tượng ra toàn bộ quá trình là điều làm đệ quy mạnh, và cũng là điều làm nó khó chịu lúc mới học.
+
+## 6. Điều đáng nhớ
+
+Nếu bạn đã làm được một bài chứng minh quy nạp, bạn đã biết đệ quy. Thứ duy nhất cần đổi là **hướng suy nghĩ**: quy nạp đi từ nhỏ lên lớn, còn khi viết hàm đệ quy bạn đứng ở $n$ và gọi xuống $n-1$.
+
+Đi lên hay đi xuống thì cấu trúc vẫn thế, và sự khác biệt về hướng đó chính là chủ đề của bài 19, nơi bạn sẽ thấy quy hoạch động chỉ là đệ quy viết theo chiều ngược lại.

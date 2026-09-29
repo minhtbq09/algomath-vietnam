@@ -1,0 +1,90 @@
+---
+title: Shortest paths and Dijkstra
+---
+
+## 1. Opening problem
+
+> A map has cities joined by roads, each labelled with its length in kilometres. Find the shortest route from one city to another.
+
+BFS in lesson 10 solved "fewest steps". But here each step costs a different amount: a 5 km stretch and a 300 km stretch cannot count the same.
+
+See where BFS breaks. It finds the route **through the fewest cities**, which may easily be far longer than a detour through many cities on short roads. BFS is correct exactly when all edges have equal weight.
+
+## 2. The mathematical idea
+
+Let $d(v)$ be the shortest distance from the start to $v$. Two statements underpin everything.
+
+**Statement 1: the triangle inequality.** For every edge $u \to v$ of weight $w$:
+
+$$d(v) \le d(u) + w$$
+
+Because taking the shortest route to $u$ and then that edge gives a route to $v$ of length $d(u) + w$, and the shortest cannot be longer.
+
+**Statement 2: every subpath of a shortest path is itself shortest.** If the shortest route from $s$ to $v$ passes through $u$, then its initial segment must be a shortest route to $u$. Otherwise replacing that segment with a shorter one would give a shorter route to $v$, a contradiction.
+
+Statement 2 is the key. It says the problem has **optimal substructure**: a big solution is assembled from small ones. You will meet exactly this property again in lesson 19 under the name dynamic programming.
+
+## 3. Turning it into an algorithm
+
+Dijkstra rests on one observation: **among unsettled vertices, the one with the smallest tentative $d$ already has its final value.**
+
+Why? To reach that vertex by a shorter route you would first have to pass through another unsettled vertex, and every unsettled vertex has a tentative distance at least as large. Adding a non-negative weight only makes it larger. No shorter route exists.
+
+Note the phrase **non-negative weights**. That is not a footnote, it is a condition for survival. With a negative edge the argument collapses and Dijkstra returns wrong answers. Problems with negative edges need a different algorithm, called Bellman-Ford.
+
+The steps:
+
+1. Set $d(s) = 0$ and every other $d = \infty$.
+2. Take the unsettled vertex with the smallest $d$, call it $u$, and mark it settled.
+3. For each edge $u \to v$ of weight $w$: if $d(u) + w < d(v)$, update $d(v) = d(u) + w$.
+4. Repeat until no vertices remain.
+
+<Note>
+Note the relationship with BFS. If every edge has weight 1, the vertex with the smallest $d$ is always the one at the front of the queue, and Dijkstra degenerates into BFS. BFS is a special case of Dijkstra, not a different family of algorithm.
+</Note>
+
+## 4. Simulation
+
+Step through and watch the priority queue on the right: it stays sorted, and the vertex on top is the one about to be settled.
+
+<Viz name="dijkstra" />
+
+One moment worth pausing on: vertex C gets distance 2 very early, while vertex B starts at 4 and later drops to 3 once the route through C is found. That is the update on line 5 of the pseudocode, and it shows why a tentative value is not final until the vertex leaves the queue.
+
+## 5. Pseudocode and Python
+
+```python
+import heapq
+
+def dijkstra(adj, s, n):
+    """adj[u] is a list of (v, w) pairs meaning an edge u→v of weight w."""
+    d = [float('inf')] * n
+    d[s] = 0
+    pq = [(0, s)]                    # (tentative distance, vertex)
+
+    while pq:
+        du, u = heapq.heappop(pq)    # take the vertex with smallest d
+        if du > d[u]:
+            continue                 # a stale entry, skip it
+        for v, w in adj[u]:
+            if d[u] + w < d[v]:
+                d[v] = d[u] + w
+                heapq.heappush(pq, (d[v], v))
+    return d
+```
+
+`heapq` is a priority queue, a structure that always yields the smallest element in $O(\log n)$. Swapping an ordinary queue for a priority queue is the entire difference between BFS and Dijkstra.
+
+The complexity is $O((n + m)\log n)$.
+
+## 6. What to take away
+
+Three graph-traversal algorithms so far, told apart by a single question: **which vertex comes out next?**
+
+| Algorithm | Which vertex comes out | Use when |
+| --- | --- | --- |
+| BFS | the one that entered earliest | all edges cost the same |
+| DFS | the one that entered most recently | you only need reachability |
+| Dijkstra | the one with smallest $d$ | edges have non-negative weights |
+
+The same loop skeleton; change the data structure and you get three algorithms solving three different problems.

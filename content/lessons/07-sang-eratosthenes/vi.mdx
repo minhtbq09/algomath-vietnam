@@ -1,0 +1,76 @@
+---
+title: Số nguyên tố và sàng Eratosthenes
+---
+
+## 1. Bài toán mở đầu
+
+> Liệt kê mọi số nguyên tố không vượt quá 1000.
+
+Cách hiển nhiên: với từng số $n$, thử chia $n$ cho mọi số từ 2 đến $n-1$. Nếu không số nào chia hết thì $n$ là nguyên tố.
+
+Cách này đúng nhưng lãng phí kinh khủng, và nó lãng phí theo hai kiểu khác nhau. Mục 2 và mục 3 sẽ gỡ từng kiểu một.
+
+## 2. Ý tưởng Toán
+
+**Lãng phí thứ nhất: thử chia tới tận $n-1$.**
+
+Giả sử $n$ là hợp số, tức $n = a \cdot b$ với $1 < a \le b < n$. Nếu cả $a$ và $b$ đều lớn hơn $\sqrt{n}$ thì $a \cdot b > n$, mâu thuẫn. Vậy phải có ít nhất một thừa số không vượt quá $\sqrt{n}$.
+
+Kết luận: **chỉ cần thử chia tới $\sqrt{n}$**. Với $n = 1000$, đó là 31 phép thử thay vì 999.
+
+**Lãng phí thứ hai: kiểm tra từng số một cách độc lập.**
+
+Đây là chỗ tinh tế hơn. Khi kiểm tra 91, bạn phát hiện $91 = 7 \times 13$. Khi kiểm tra 98, bạn lại phát hiện nó chia hết cho 7. Bạn đang khám phá lại cùng một sự thật về số 7 nhiều lần.
+
+Eratosthenes đảo ngược câu hỏi. Thay vì hỏi "số này có ước nào không", hãy hỏi "**số nguyên tố này có những bội nào**", rồi gạch hết chúng đi một lượt.
+
+## 3. Chuyển thành thuật toán
+
+Viết mọi số từ 2 đến $n$. Lấy số nhỏ nhất chưa bị gạch, đó là số nguyên tố, rồi gạch mọi bội của nó. Lặp lại.
+
+Hai chi tiết quyết định hiệu quả, và cả hai đều đến thẳng từ mục 2:
+
+**Chi tiết 1: chỉ cần gạch với $p \le \sqrt{n}$.** Vì mọi hợp số $\le n$ có một thừa số nguyên tố $\le \sqrt{n}$, nên sau khi gạch xong tới $\sqrt{n}$, mọi hợp số đều đã bị gạch. Số nào còn lại chắc chắn nguyên tố.
+
+**Chi tiết 2: vòng gạch của $p$ bắt đầu từ $p^2$, không phải $2p$.** Vì mọi bội $kp$ với $k < p$ đều có một thừa số nguyên tố nhỏ hơn $p$, nên chúng đã bị gạch ở các vòng trước rồi. Bắt đầu từ $p^2$ tiết kiệm được rất nhiều thao tác thừa.
+
+Độ phức tạp cuối cùng là $O(n \log \log n)$, gần như tuyến tính.
+
+## 4. Mô phỏng
+
+Chạy từng bước và chú ý hai điều: vòng gạch của mỗi số nguyên tố bắt đầu ở đâu, và thuật toán ngừng gạch ở số nguyên tố nào.
+
+<Viz name="sieve" />
+
+Với $n = 60$, thuật toán ngừng gạch sau số 7, vì $\sqrt{60} \approx 7{,}75$. Mọi số chưa bị gạch từ 11 trở đi đều tự động là nguyên tố.
+
+## 5. Pseudocode và Python
+
+```python
+def sang(n):
+    la_nguyen_to = [True] * (n + 1)
+    la_nguyen_to[0] = la_nguyen_to[1] = False
+
+    p = 2
+    while p * p <= n:                 # chỉ cần tới căn bậc hai
+        if la_nguyen_to[p]:
+            for k in range(p * p, n + 1, p):   # bắt đầu từ p²
+                la_nguyen_to[k] = False
+        p += 1
+
+    return [i for i in range(2, n + 1) if la_nguyen_to[i]]
+```
+
+So sánh chi phí thực tế để thấy khác biệt. Với $n = 10^6$:
+
+| Cách làm | Số phép tính ước lượng |
+| --- | --- |
+| Thử chia tới $n-1$ | khoảng $5 \times 10^{11}$ |
+| Thử chia tới $\sqrt{n}$ | khoảng $5 \times 10^8$ |
+| Sàng Eratosthenes | khoảng $3 \times 10^6$ |
+
+## 6. Điều đáng nhớ
+
+Bước nhảy lớn nhất trong bài này không phải chi tiết kỹ thuật nào, mà là việc **đảo ngược câu hỏi**. "Số này có ước nào" là câu hỏi tự nhiên nhưng dẫn tới thuật toán chậm. "Số nguyên tố này có bội nào" là câu hỏi lạ hơn nhưng dẫn tới thuật toán nhanh gấp trăm lần.
+
+Khi một thuật toán chậm, đôi khi thứ cần sửa không phải code mà là câu hỏi.

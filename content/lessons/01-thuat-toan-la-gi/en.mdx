@@ -1,0 +1,75 @@
+---
+title: What is an algorithm?
+---
+
+## 1. Opening problem
+
+Solve this in your head before reading on.
+
+> You have 8 identical-looking coins. Exactly one is lighter. You have a balance scale. Find the light coin in as few weighings as possible.
+
+Almost everyone arrives at 2: split the coins into groups of 3, 3 and 2. Weigh the two groups of 3 against each other. If one side rises, the light coin is in that group of 3, and the second weighing splits it into 1, 1, 1. If they balance, the light coin is in the group of 2, and the second weighing compares those two.
+
+You have just invented an algorithm. But the paragraph above is **not yet** an algorithm, and the gap between the two is what this lesson is about.
+
+## 2. The mathematical idea
+
+What makes that solution correct is not cleverness. It is a counting property.
+
+Each weighing has three possible outcomes: left rises, right rises, or balance. After $k$ weighings you can distinguish at most $3^k$ cases. Since $3^1 = 3 < 8 \le 9 = 3^2$, one weighing cannot possibly work, and two suffice if you split well.
+
+This is the kind of argument you already use: count the possibilities, compare with the information each test yields, conclude a lower bound. It answers *why the answer is 2*.
+
+It does not yet answer *how a machine could do it*.
+
+## 3. Turning it into an algorithm
+
+Hand that solution to a robot and the gaps appear immediately, gaps a human reader fills in silently:
+
+- "Split into groups of 3, 3 and 2" — which coins go where? The robot needs a rule, such as numbering them 1 to 8 and taking {1,2,3}, {4,5,6}, {7,8}.
+- "The light coin is in the lighter group" — the robot needs to *store* which group it is now working on, not point at it.
+- "The second weighing splits it into 1, 1, 1" — what if the current group has 2 coins? A human infers; a robot does not.
+
+An **algorithm** is a description meeting three requirements:
+
+1. **Determinate.** Every step has exactly one reading. Nothing is left to guess.
+2. **Finite.** For every valid input it stops after finitely many steps.
+3. **Correct.** When it stops, what it returns is what the problem asked for.
+
+<Note>
+These sound obvious, but they rule out a great deal that looks like an algorithm. "Halve the interval until you find the root" breaks finiteness when the root is irrational. "Pick the most suitable number" breaks determinacy unless suitable is defined.
+</Note>
+
+Rewritten properly:
+
+1. Number the coins 1 to 8. Let the working set be $S = \{1, \dots, 8\}$.
+2. If $|S| = 1$, return its only element and stop.
+3. Split $S$ into $A$, $B$, $C$ with $|A| = |B| = \lceil |S| / 3 \rceil$ and $C$ the remainder.
+4. Weigh $A$ against $B$. If $A$ rises, set $S \leftarrow A$. If $B$ rises, set $S \leftarrow B$. If they balance, set $S \leftarrow C$.
+5. Go back to step 2.
+
+Every step is now determinate. It terminates because $|S|$ strictly decreases each round. And it is correct because the light coin is always inside $S$, a property that holds at step 1 and is preserved by step 4. That "always true at every pass" property has a name, the **invariant**, and lesson 2 is devoted to it.
+
+## 4. Simulation
+
+This lesson has no simulation of its own yet. You can look ahead at [the Euclidean algorithm](/en/visualizations/euclid/), where the same loop structure appears in arithmetic form: each round replaces the problem with a smaller one until it can shrink no further.
+
+## 5. Pseudocode and Python
+
+```python
+def find_light_coin(S, weigh):
+    """S is a list of coin indices.
+    weigh(A, B) returns -1 if A is lighter, 1 if B is lighter, 0 if equal."""
+    while len(S) > 1:
+        k = (len(S) + 2) // 3          # size of each weighed group
+        A, B, C = S[:k], S[k:2*k], S[2*k:]
+        r = weigh(A, B)
+        S = A if r == -1 else B if r == 1 else C
+    return S[0]
+```
+
+Read the line `S = A if ... else B if ... else C` closely. It is step 4 above, nothing added and nothing removed. Once the steps are written without gaps, turning them into code is the easy part.
+
+## 6. What to take away
+
+You are not missing algorithmic thinking. You use it every time you solve a problem with several cases. What you need to add is the habit of writing a solution in a way that **allows the reader to infer nothing**.

@@ -1,0 +1,85 @@
+---
+title: DFS and connected components
+---
+
+## 1. Opening problem
+
+> An island is drawn as a grid of land and water cells. Two land cells sharing an edge belong to the same landmass. How many separate landmasses are there?
+
+You solve this in your head by picking an unmarked land cell, colouring in the whole mass containing it, counting one, then finding the next unmarked land cell.
+
+That "colour in the whole mass" operation is DFS.
+
+## 2. The mathematical idea
+
+The relation "these two cells are in the same landmass" has three properties:
+
+- **Reflexive.** Every cell shares a mass with itself.
+- **Symmetric.** If $u$ shares with $v$ then $v$ shares with $u$.
+- **Transitive.** If $u$ shares with $v$ and $v$ with $w$, then $u$ shares with $w$.
+
+Those three define an **equivalence relation**, and every equivalence relation splits a set into disjoint **equivalence classes** covering it.
+
+In graph language those classes are **connected components**. "How many landmasses" becomes "how many equivalence classes", and what we need is a way to enumerate one class at a time.
+
+## 3. Turning it into an algorithm
+
+To enumerate a class we need a way to travel from one vertex to **every** vertex reachable from it. Any way will do, provided it misses nothing and never loops forever.
+
+BFS from lesson 10 does that. So does DFS, and the only difference between the two is **one line of code**:
+
+| | Which item comes out | Traversal shape |
+| --- | --- | --- |
+| BFS | oldest first, a queue | spreads evenly by layer |
+| DFS | newest first, a stack | dives deep along one branch |
+
+Since counting landmasses only needs reachability, not distance, both are correct. DFS is usually preferred because the recursive version is shorter.
+
+<Note>
+An important distinction: DFS does **not** give shortest distances. The number on each cell in the simulation below is the *visiting order*, a completely different thing from the BFS number. Using DFS for a shortest-path problem is a common and very hard-to-spot bug, because the program still runs and still produces an answer, just the wrong one.
+</Note>
+
+## 4. Simulation
+
+This is the same maze as the BFS simulation in lesson 10. Run both and compare the shape of the visited region.
+
+<Viz name="dfs" />
+
+BFS produces concentric rings around the start. DFS produces one long winding path. Same graph, same loop structure; swapping the queue for a stack gives two entirely different pictures.
+
+## 5. Pseudocode and Python
+
+The recursive version, the shortest and most natural:
+
+```python
+def dfs(grid, r, c, seen):
+    if (r, c) in seen or grid[r][c] == '#':
+        return
+    seen.add((r, c))
+    for dr, dc in ((-1,0), (0,1), (1,0), (0,-1)):
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]):
+            dfs(grid, nr, nc, seen)
+
+def count_landmasses(grid):
+    seen = set()
+    count = 0
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c] == '.' and (r, c) not in seen:
+                dfs(grid, r, c, seen)
+                count += 1
+    return count
+```
+
+The outer loop in `count_landmasses` is where the equivalence-class structure shows: every unseen cell encountered is a new class.
+
+A practical warning: the recursive version can overflow the call stack on a large grid, say 1000×1000 all land, where the recursion depth reaches a million. Then you must write the explicit-stack version used in the simulation above. Lesson 14 goes deeper into the cost of recursion.
+
+## 6. What to take away
+
+Two separate lessons here.
+
+First, **counting connected components is counting equivalence classes**, a structure you already know from mathematics.
+
+Second, **BFS and DFS differ only in a data structure**, but that difference decides which information survives. Choosing a data structure is not a matter of style, it is a matter of correctness.

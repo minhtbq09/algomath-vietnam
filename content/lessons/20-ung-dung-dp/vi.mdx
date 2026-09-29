@@ -1,0 +1,96 @@
+---
+title: 'Ứng dụng: đường đi, đổi tiền, cái túi'
+---
+
+## 1. Bài toán mở đầu
+
+> Bạn có một chiếc ba lô chịu được 10 kg. Có 4 món đồ: món A nặng 5 kg đáng giá 10 điểm, B nặng 4 kg đáng 40 điểm, C nặng 6 kg đáng 30 điểm, D nặng 3 kg đáng 50 điểm. Chọn các món để tổng giá trị lớn nhất.
+
+Thử tham lam theo giá trị: chọn D (50), rồi B (40), tổng 7 kg và 90 điểm. Còn 3 kg, không món nào vừa. Kết quả 90.
+
+Ở đây tham lam đúng, nhưng đó là may mắn. Đổi số một chút là nó sai ngay, và bài 18 đã cho thấy ta không được tin vào may mắn.
+
+## 2. Ý tưởng Toán
+
+Bài này khép lại chương trình bằng cách cho thấy ba bài toán trông khác hẳn nhau thực chất là **một khuôn mẫu duy nhất**, khác nhau ở phần định nghĩa trạng thái.
+
+**Bài 1: đếm đường đi trên lưới.**
+Trạng thái: $f(r,c)$ là số đường tới ô $(r,c)$.
+Truy hồi: $f(r,c) = f(r-1,c) + f(r,c-1)$.
+
+**Bài 2: đổi tiền ít tờ nhất.**
+Trạng thái: $f(t)$ là số tờ ít nhất để trả đúng $t$ đồng.
+Truy hồi: $f(t) = 1 + \min_{m \in M, \; m \le t} f(t - m)$.
+
+Chú ý bài này chính là bài mà greedy thất bại ở bài 18. DP giải đúng cho **mọi** hệ mệnh giá, không cần giả thiết gì.
+
+**Bài 3: cái túi.**
+Trạng thái: $f(i, w)$ là giá trị lớn nhất khi xét $i$ món đầu và sức chứa còn $w$.
+Truy hồi: với món thứ $i$ nặng $w_i$ giá trị $v_i$,
+
+$$f(i, w) = \max\big(\underbrace{f(i-1, w)}_{\text{không lấy}}, \; \underbrace{f(i-1, w - w_i) + v_i}_{\text{lấy}}\big)$$
+
+Ba bài, ba truy hồi khác nhau, nhưng cùng một quy trình bốn bước ở bài 19.
+
+<Note>
+Điểm mới ở bài cái túi là trạng thái có **hai chiều**. Chỉ dùng $f(w)$ là không đủ, vì ta cần biết đã xét tới món nào để không lấy một món hai lần. Khi bài toán có thêm ràng buộc, hãy đưa ràng buộc đó vào trạng thái. Đây đúng là ý tưởng bạn đã gặp ở bài tập cuối bài 10, nơi mê cung được nhân đôi thành hai tầng để nhớ đã phá tường hay chưa.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Bảng đối chiếu ba bài, để thấy khuôn mẫu:
+
+| | Đường đi | Đổi tiền | Cái túi |
+| --- | --- | --- | --- |
+| Trạng thái | $f(r,c)$ | $f(t)$ | $f(i,w)$ |
+| Số chiều | 2 | 1 | 2 |
+| Phép ghép | cộng | lấy min | lấy max |
+| Cơ sở | $f(0,0)=1$ | $f(0)=0$ | $f(0,w)=0$ |
+| Chi phí | $O(RC)$ | $O(t \cdot \lvert M\rvert)$ | $O(n \cdot W)$ |
+
+Ba phép ghép khác nhau, cộng để đếm, min và max để tối ưu, nhưng cấu trúc thì giống hệt.
+
+## 4. Mô phỏng
+
+Mở lại [mô phỏng bảng DP](/vi/visualizations/dp-grid/) và hình dung phiên bản cái túi: thay vì lưới toạ độ, hai chiều là "món thứ mấy" và "sức chứa còn lại"; thay vì cộng hai ô, ta lấy max của hai ô. Hình ảnh điền bảng thì y hệt.
+
+## 5. Pseudocode và Python
+
+```python
+def cai_tui(mon, suc_chua):
+    """mon là danh sách các cặp (can_nang, gia_tri)."""
+    n = len(mon)
+    f = [[0] * (suc_chua + 1) for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        can, gia = mon[i - 1]
+        for w in range(suc_chua + 1):
+            f[i][w] = f[i - 1][w]                       # không lấy món i
+            if can <= w:
+                f[i][w] = max(f[i][w], f[i - 1][w - can] + gia)   # lấy món i
+    return f[n][suc_chua]
+
+do = [(5, 10), (4, 40), (6, 30), (3, 50)]
+print(cai_tui(do, 10))    # 90
+
+
+def doi_tien(menh_gia, tien):
+    f = [0] + [float('inf')] * tien
+    for t in range(1, tien + 1):
+        for m in menh_gia:
+            if m <= t and f[t - m] + 1 < f[t]:
+                f[t] = f[t - m] + 1
+    return f[tien] if f[tien] != float('inf') else None
+
+print(doi_tien([1, 3, 4], 6))    # 2, đúng như bài 18 đã chỉ ra
+```
+
+## 6. Điều đáng nhớ
+
+Đây là bài cuối, nên hãy nhìn lại toàn bộ chặng đường.
+
+Bạn bắt đầu ở bài 1 với một bài toán cân đồng xu, và học rằng lời giải Toán chưa phải thuật toán. Rồi bất biến ở bài 2 hoá ra là cách chứng minh vòng lặp đúng. Chia có dư dẫn tới Euclid. Quan hệ dẫn tới đồ thị. Quy nạp dẫn tới đệ quy. Và đệ quy có bài toán con chồng lấn dẫn tới quy hoạch động.
+
+Không có bước nào trong chuỗi đó đòi hỏi một năng lực mới. Mỗi bước chỉ là viết lại một ý tưởng Toán bạn đã có, theo cách một cái máy làm theo được.
+
+Đó là toàn bộ luận điểm của AlgoMath. Bạn không học một môn mới. Bạn học ngôn ngữ thứ hai cho môn bạn đã biết.

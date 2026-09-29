@@ -1,0 +1,85 @@
+---
+title: Complexity by counting operations
+---
+
+## 1. Opening problem
+
+> Two students write programs for the same task. A's runs in 2 seconds on 1000 items. B's takes 8 seconds on the same data. Whose program is better?
+
+The honest answer is: **not enough information**. On 1000 items A is four times faster. But if A needs $n^2$ operations while B needs $50n$, then at $n = 100{,}000$ A takes hours while B finishes instantly.
+
+What decides the outcome is not the number of seconds but **how the cost grows as the data grows**.
+
+## 2. The mathematical idea
+
+You already have the tool for this: comparing growth rates of functions.
+
+Over $n$ from 1 to 20 these three functions barely differ. But as $n \to \infty$:
+
+$$\log_2 n \;\ll\; n \;\ll\; n\log_2 n \;\ll\; n^2 \;\ll\; 2^n$$
+
+The table below shows the gap better than any explanation. Assume a machine doing $10^9$ operations per second:
+
+| $n$ | $n$ | $n\log_2 n$ | $n^2$ | $2^n$ |
+| --- | --- | --- | --- | --- |
+| 20 | instant | instant | instant | 1 ms |
+| 1 000 | instant | instant | 1 ms | longer than the universe |
+| 1 000 000 | 1 ms | 20 ms | 17 minutes | longer than the universe |
+| 1 000 000 000 | 1 second | 30 seconds | 31 years | longer than the universe |
+
+## 3. Turning it into an algorithm
+
+Counting in practice is simpler than you might expect. You do not count individual additions, you count **how many times the innermost loop body runs**.
+
+Common patterns:
+
+- One loop running $n$ times: $O(n)$.
+- Nested loops, each $n$ times: $O(n^2)$.
+- Outer $i$ from 1 to $n$, inner $j$ from $i$ to $n$: the total is $n + (n-1) + \dots + 1 = \dfrac{n(n+1)}{2}$, still $O(n^2)$.
+- Each pass halves the range: $O(\log n)$.
+
+Big-O notation drops constants and lower-order terms. Writing $O(n^2)$ means "for large enough $n$, the cost is proportional to $n^2$ times some constant".
+
+<Note>
+Dropping constants sounds sloppy, but it is deliberate. Constants depend on the machine, the language and even the compiler, all of which change yearly. The growth order belongs to the algorithm itself and does not. When two algorithms differ in order, no constant rescues the slower one.
+</Note>
+
+This does **not** mean constants are meaningless in practice. For small $n$ an $O(n^2)$ algorithm with a small constant can beat an $O(n \log n)$ one with a large constant. Real sorting libraries switch to insertion sort once a sublist drops below about 16 elements, for exactly that reason.
+
+## 4. Simulation
+
+This lesson has no simulation of its own. But you can measure a growth rate yourself with [the binary search simulation](/en/visualizations/binary-search/): count the steps on a 13-element list, then work out how many more a 26-element list would need. The answer is exactly one, and that is $\log_2$ at work.
+
+## 5. Pseudocode and Python
+
+```python
+# O(n) — each element examined exactly once
+def total(a):
+    s = 0
+    for x in a:
+        s += x
+    return s
+
+# O(n²) — for each element, scan the whole list again
+def has_pair_summing_to(a, target):
+    for i in range(len(a)):
+        for j in range(i + 1, len(a)):
+            if a[i] + a[j] == target:
+                return True
+    return False
+
+# O(n) for the same problem — change the question, not the machine
+def has_pair_summing_to_fast(a, target):
+    seen = set()
+    for x in a:
+        if target - x in seen:
+            return True
+        seen.add(x)
+    return False
+```
+
+The last two functions solve the same problem. The second is faster through no programming trick, but through a different question: instead of asking "is there an element that pairs with $x$", it asks "have I already seen $target - x$". Changing the question changes the complexity.
+
+## 6. What to take away
+
+When you look at an algorithm, the first question is not "does it run" but "if the data grows tenfold, how much slower does it get". That question separates a usable solution from one that is only correct on paper.

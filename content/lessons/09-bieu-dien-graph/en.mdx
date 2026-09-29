@@ -1,0 +1,86 @@
+---
+title: Representing a graph
+---
+
+## 1. Opening problem
+
+> You must store a 1000-vertex graph so as to answer two kinds of question: "are $u$ and $v$ joined" and "list every neighbour of $u$". How should you store it?
+
+The question sounds technical, but it is really a trade-off problem, and the trade-off is mathematical.
+
+## 2. The mathematical idea
+
+There are two ways to describe a relation, and you have used both.
+
+**Way 1: a table.** Draw an $n \times n$ grid; cell $(i, j)$ holds 1 if $i$ joins $j$ and 0 otherwise. This is the **adjacency matrix**.
+
+**Way 2: a listing.** For each vertex, write out the vertices joined to it. This is the **adjacency list**.
+
+Both hold exactly the same information, but their costs differ sharply. With $n$ vertices and $m$ edges:
+
+| | Adjacency matrix | Adjacency list |
+| --- | --- | --- |
+| Memory | $O(n^2)$ | $O(n + m)$ |
+| Are $u$ and $v$ joined | $O(1)$ | $O(\deg u)$ |
+| Visit every neighbour of $u$ | $O(n)$ | $O(\deg u)$ |
+| Visit every edge | $O(n^2)$ | $O(n + m)$ |
+
+Neither wins outright. The choice depends on **how large $m$ is relative to $n^2$**.
+
+A simple graph on $n$ vertices has at most $\binom{n}{2} = \frac{n(n-1)}{2}$ edges. If $m$ is near that, the graph is **dense** and a matrix is reasonable. If $m$ is far smaller, say $m = O(n)$, the graph is **sparse** and a matrix is hugely wasteful.
+
+<Note>
+Concrete numbers for the gap. A graph on 10000 vertices with 30000 edges, a small social network. The adjacency matrix needs $10^8$ cells, around 100 MB at one byte each, and 99.97% of them are zero. The adjacency list needs about 60000 numbers, under 1 MB. Choosing wrong here does not make the program slower, it makes the program impossible.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Practical rules:
+
+- Sparse graph, $m \ll n^2$: use an **adjacency list**. This covers most real problems, including road maps, social networks and mazes.
+- Dense graph, or very frequent "are $u$ and $v$ joined" queries: use an **adjacency matrix**.
+- Edge weights fit either: the matrix stores the weight instead of 1, the list stores (vertex, weight) pairs.
+
+For a square grid like the maze in lesson 10 there is a third option that is cheaper still: **store no edges at all**. The neighbours of $(r, c)$ follow from the coordinates with four additions. That is why the BFS simulation keeps only a character grid and no adjacency structure.
+
+## 4. Simulation
+
+This lesson has no simulation of its own. In [the BFS simulation](/en/visualizations/bfs/), notice that the graph is never stored anywhere: whenever neighbours are needed, the algorithm recomputes them from the coordinates. That is the implicit representation section 3 just described.
+
+## 5. Pseudocode and Python
+
+```python
+n = 5
+edges = [(0, 1), (0, 2), (1, 3), (2, 3), (3, 4)]
+
+# Adjacency matrix
+matrix = [[0] * n for _ in range(n)]
+for u, v in edges:
+    matrix[u][v] = 1
+    matrix[v][u] = 1        # undirected: record both directions
+
+# Adjacency list
+adj = [[] for _ in range(n)]
+for u, v in edges:
+    adj[u].append(v)
+    adj[v].append(u)
+
+print(matrix[0][1])   # 1, answered instantly
+print(adj[3])         # [1, 2, 4], visits exactly the neighbours
+```
+
+For a grid, no structure is needed:
+
+```python
+def neighbours(r, c, R, C, grid):
+    for dr, dc in ((-1, 0), (0, 1), (1, 0), (0, -1)):
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] != '#':
+            yield nr, nc
+```
+
+## 6. What to take away
+
+The same mathematical object, two ways of storing it, costs differing by a factor of hundreds. This is the first time in the course you meet a truth that will keep returning: **how you store data decides which algorithms run fast**.
+
+The question to ask before writing code is not "which algorithm" but "how will this data be queried".

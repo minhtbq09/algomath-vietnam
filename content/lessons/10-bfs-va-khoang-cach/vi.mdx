@@ -1,0 +1,79 @@
+---
+title: BFS và khoảng cách theo số bước
+---
+
+## 1. Bài toán mở đầu
+
+> Từ một ô trong mê cung, hãy chỉ ra tất cả những ô cách nó đúng 1 bước, rồi tất cả những ô cách đúng 2 bước, rồi 3 bước.
+
+Câu hỏi này dễ đến mức trông như không phải bài toán. Nhưng hãy để ý cách bạn vừa trả lời nó trong đầu: bạn không đi lang thang rồi đếm. Bạn **quét theo lớp**. Xong hết lớp 1 mới sang lớp 2.
+
+Cái phản xạ đó chính là thuật toán của bài này. Việc còn lại chỉ là viết nó ra cho chính xác.
+
+## 2. Ý tưởng Toán
+
+Gọi $L_k$ là tập các ô cách ô xuất phát đúng $k$ bước. Ta có ba mệnh đề:
+
+- $L_0 = \{s\}$, chỉ gồm ô xuất phát.
+- Mọi ô trong $L_{k+1}$ đều kề với ít nhất một ô trong $L_k$.
+- Nếu một ô kề với một ô trong $L_k$ và **chưa** xuất hiện ở lớp nào trước đó, thì nó thuộc $L_{k+1}$.
+
+Mệnh đề thứ ba là chỗ dễ trượt. Vì sao lại cần điều kiện "chưa xuất hiện trước đó"? Vì nếu một ô đã nằm ở $L_2$ thì khoảng cách của nó là 2, và việc nó cũng kề với một ô ở $L_5$ không làm nó xa hơn. **Lần đầu tiên chạm tới một ô chính là lần ngắn nhất.**
+
+Các lớp $L_0, L_1, L_2, \dots$ tạo thành một phân hoạch của tập ô đến được: mỗi ô nằm ở đúng một lớp. Đây là cấu trúc bạn đã gặp khi làm việc với quan hệ tương đương.
+
+## 3. Chuyển thành thuật toán
+
+Muốn máy quét theo lớp, ta cần một cơ chế đảm bảo mọi ô ở lớp $k$ được xử lý xong trước bất kỳ ô nào ở lớp $k+1$.
+
+Cấu trúc dữ liệu làm đúng việc đó là **hàng đợi**: vào trước ra trước, giống hàng người xếp mua vé. Vì các ô lớp $k$ được đưa vào hàng đợi trước các ô lớp $k+1$, chúng cũng được lấy ra trước.
+
+<Note>
+Đây là toàn bộ bí mật của BFS. Không phải một mẹo tinh vi nào cả, chỉ là chọn đúng cấu trúc dữ liệu để trật tự theo lớp tự động được giữ. Nếu đổi hàng đợi thành ngăn xếp thì thuật toán vẫn chạy, vẫn duyệt hết, nhưng các con số ghi trên ô không còn là khoảng cách ngắn nhất nữa. Bài 11 sẽ nói về trường hợp đó, tên nó là DFS.
+</Note>
+
+Các bước:
+
+1. Gán $d[s] = 0$, đưa $s$ vào hàng đợi.
+2. Trong khi hàng đợi khác rỗng, lấy ô $u$ ở đầu hàng đợi ra.
+3. Với mỗi ô $v$ kề $u$: nếu $d[v]$ chưa được gán thì đặt $d[v] = d[u] + 1$ và đưa $v$ vào cuối hàng đợi.
+4. Khi hàng đợi rỗng, mọi ô đến được đều đã có $d$ đúng bằng khoảng cách ngắn nhất.
+
+## 4. Mô phỏng
+
+Bấm Bước sau từng bước một và theo dõi cột Hàng đợi bên phải. Hãy dừng lại đúng lúc số 3 đầu tiên xuất hiện và tự hỏi vì sao lúc đó chưa có ô nào mang số 4.
+
+<Viz name="bfs" />
+
+Bật tắt ô "Hiện số bước" để thấy rõ các lớp màu. Dùng phím mũi tên trái phải nếu bạn muốn đi nhanh hơn.
+
+## 5. Pseudocode và Python
+
+```python
+from collections import deque
+
+def bfs(luoi, xuat_phat):
+    R, C = len(luoi), len(luoi[0])
+    d = {xuat_phat: 0}
+    hang_doi = deque([xuat_phat])
+
+    while hang_doi:
+        r, c = hang_doi.popleft()          # lấy ở ĐẦU hàng đợi
+        for dr, dc in ((-1,0), (0,1), (1,0), (0,-1)):
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < R and 0 <= nc < C \
+               and luoi[nr][nc] != '#' and (nr, nc) not in d:
+                d[(nr, nc)] = d[(r, c)] + 1
+                hang_doi.append((nr, nc))  # thêm vào CUỐI hàng đợi
+    return d
+```
+
+Hai dòng có ghi chú là hai dòng quyết định tất cả. Đổi `popleft()` thành `pop()` là bạn đã biến BFS thành DFS, và mọi con số trong `d` mất ý nghĩa khoảng cách.
+
+Độ phức tạp: mỗi ô được đưa vào hàng đợi đúng một lần và mỗi cạnh được xét đúng hai lần, nên chi phí là $O(V + E)$, tuyến tính theo kích thước đồ thị.
+
+## 6. Điều đáng nhớ
+
+BFS trông như một thuật toán về mê cung, nhưng mê cung chỉ là một cách vẽ. Bất kỳ bài toán nào có dạng "ít nhất bao nhiêu bước để đi từ trạng thái này sang trạng thái kia, mỗi bước tốn như nhau" đều là BFS sau khi bạn định nghĩa được thế nào là một trạng thái và thế nào là một bước.
+
+Bài tập cuối bài sẽ cho bạn thấy điều đó với một quân mã trên bàn cờ, và với một mê cung mà bạn được phép phá đúng một bức tường.

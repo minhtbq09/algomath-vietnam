@@ -1,0 +1,87 @@
+---
+title: Từ bài toán quan hệ đến đồ thị
+---
+
+## 1. Bài toán mở đầu
+
+> Trong một lớp có 30 học sinh, mỗi người quen ít nhất 15 người khác. Quan hệ quen biết là hai chiều. Chứng minh rằng có thể xếp cả lớp thành một vòng tròn sao cho hai người cạnh nhau đều quen nhau.
+
+Đây là một bài Olympic tổ hợp quen thuộc. Điều đáng chú ý không phải lời giải, mà là việc bạn gần như chắc chắn đã **vẽ hình** khi đọc đề: các chấm là người, các đoạn nối là quan hệ quen.
+
+Hình vẽ đó có tên. Nó là đồ thị.
+
+## 2. Ý tưởng Toán
+
+Một **đồ thị** gồm hai thứ: tập các **đỉnh** và tập các **cạnh** nối chúng. Chỉ vậy thôi.
+
+Sự nghèo nàn của định nghĩa chính là sức mạnh của nó. Vì đồ thị không quy định đỉnh là gì, mọi bài toán về quan hệ giữa các đối tượng đều mô hình hoá được:
+
+| Bài toán | Đỉnh | Cạnh |
+| --- | --- | --- |
+| Quen biết trong lớp | học sinh | hai người quen nhau |
+| Bản đồ đường đi | ngã tư | đoạn đường |
+| Xếp lịch thi | môn học | hai môn có học sinh chung |
+| Mê cung | ô trống | hai ô kề nhau |
+| Nước cờ quân mã | ô bàn cờ | một nước mã đi được |
+| Từ điển | từ | hai từ khác nhau một chữ cái |
+
+Vài khái niệm cần thuộc:
+
+- **Bậc** của một đỉnh là số cạnh nối với nó. Trong bài mở đầu, mọi đỉnh có bậc ít nhất 15.
+- **Đường đi** là dãy đỉnh liên tiếp nối bằng cạnh.
+- **Chu trình** là đường đi khép kín về điểm xuất phát.
+- Đồ thị **liên thông** nếu giữa hai đỉnh bất kỳ luôn có đường đi.
+
+Một mệnh đề đơn giản nhưng dùng rất nhiều, gọi là bổ đề bắt tay:
+
+$$\sum_{v} \deg(v) = 2|E|$$
+
+Tổng bậc mọi đỉnh bằng hai lần số cạnh, vì mỗi cạnh được đếm ở cả hai đầu. Hệ quả: số đỉnh bậc lẻ luôn là số chẵn.
+
+<Note>
+Bài mở đầu có tên riêng: nó là định lý Dirac, phát biểu rằng đồ thị $n$ đỉnh với mọi bậc ít nhất $n/2$ thì có chu trình Hamilton. Bạn không cần nhớ tên, chỉ cần thấy rằng câu hỏi "xếp vòng tròn" và câu hỏi "tồn tại chu trình đi qua mọi đỉnh đúng một lần" là cùng một câu hỏi viết bằng hai thứ tiếng.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Mô hình hoá là bước khó nhất, và nó xảy ra **trước** khi có bất kỳ dòng code nào. Ba câu hỏi cần trả lời:
+
+1. **Cái gì là đỉnh?** Thường là đối tượng, nhưng đôi khi là một *trạng thái*. Ở bài 10 bạn sẽ thấy một mê cung mà đỉnh là cặp (vị trí, đã phá tường hay chưa).
+2. **Khi nào hai đỉnh có cạnh?** Phải là một quy tắc rõ ràng, kiểm tra được.
+3. **Cạnh có hướng hay không?** Quan hệ quen biết là hai chiều nên không hướng. Quan hệ "trang A có link tới trang B" là một chiều nên có hướng.
+
+Trả lời xong ba câu này, bài toán của bạn trở thành một bài toán đồ thị chuẩn, và bạn được dùng toàn bộ kho thuật toán đã có sẵn.
+
+## 4. Mô phỏng
+
+Mở [mô phỏng BFS](/vi/visualizations/bfs/) và nhìn mê cung theo cách mới: mỗi ô trắng là một đỉnh, mỗi cặp ô kề nhau là một cạnh. Lưới ô vuông chỉ là một cách vẽ đồ thị cho dễ nhìn, thuật toán bên dưới không biết gì về hình vuông cả.
+
+## 5. Pseudocode và Python
+
+Chuyển bài toán quen biết thành đồ thị:
+
+```python
+# Danh sách kề: với mỗi người, danh sách những người họ quen
+quen = {
+    'An':   ['Bình', 'Chi'],
+    'Bình': ['An', 'Chi', 'Dũng'],
+    'Chi':  ['An', 'Bình'],
+    'Dũng': ['Bình'],
+}
+
+def bac(g, v):
+    return len(g[v])
+
+def kiem_tra_bat_tay(g):
+    tong_bac = sum(len(ke) for ke in g.values())
+    so_canh = tong_bac // 2
+    return tong_bac, so_canh
+
+print(kiem_tra_bat_tay(quen))   # (8, 4)
+```
+
+## 6. Điều đáng nhớ
+
+Đồ thị không phải một chủ đề mới bạn phải học thêm. Nó là **cái tên chính thức cho hình vẽ bạn vẫn tự nguệch ngoạc** khi giải bài toán quan hệ.
+
+Giá trị của việc gọi đúng tên nó: một khi bài toán của bạn đã là đồ thị, bạn không cần nghĩ ra thuật toán nữa. Người ta đã nghĩ hộ bạn hàng chục năm trước, và các bài từ 9 đến 12 sẽ giới thiệu chúng.

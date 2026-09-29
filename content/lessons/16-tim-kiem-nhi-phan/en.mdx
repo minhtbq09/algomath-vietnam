@@ -1,0 +1,75 @@
+---
+title: Binary search
+---
+
+## 1. Opening problem
+
+> I am thinking of an integer between 1 and 1000. Each guess gets one of three answers: higher, lower, or correct. How many guesses guarantee finding it?
+
+Almost anyone who plays this a few times discovers the guess-in-the-middle strategy. The more interesting questions are why the middle is best, and how you know 10 guesses are enough.
+
+## 2. The mathematical idea
+
+Before the first guess there are 1000 possibilities. Each answer reduces them. If you guess $m$ within the range $[lo, hi]$ then:
+
+- "lower" leaves $m - lo$ possibilities.
+- "higher" leaves $hi - m$ possibilities.
+
+You do not control the answer, so you must prepare for the worst case, namely $\max(m - lo,\; hi - m)$. That expression is smallest when the two parts are equal, that is when $m$ sits in the middle. This is a familiar optimisation, and it **proves** the middle is optimal rather than merely feeling right.
+
+After $k$ guesses at most $n / 2^k$ possibilities remain. To be down to 1 we need $2^k \ge n$, that is
+
+$$k \ge \log_2 n$$
+
+For $n = 1000$ that gives $k = 10$, since $2^{10} = 1024$.
+
+<Note>
+The 2 here is not sacred. It merely reflects each question having 2 outcomes. If your instrument gives 3 outcomes, a balance scale for instance, the answer becomes $\log_3 n$. The final exercise asks exactly that.
+</Note>
+
+## 3. Turning it into an algorithm
+
+The essential condition is **monotonicity**: the list must be sorted. On an unsorted list the answer "higher" eliminates neither side, and the whole argument collapses.
+
+The state to store is just two numbers, $lo$ and $hi$, the ends of the surviving range. The invariant is:
+
+> If $x$ is present in the list, its index lies in $[lo, hi]$.
+
+The invariant holds at the start, and each update of $lo$ or $hi$ must be checked to preserve it. That check is the correctness proof.
+
+Stop when $lo > hi$, the range is empty, and conclude that $x$ is absent.
+
+## 4. Simulation
+
+Pick a value at the top and press Next step. Watch the "range" line below: it is the algorithm's entire state.
+
+<Viz name="binary-search" />
+
+Choose 40, which is not in the list, and run to the end to see how absence gets concluded.
+
+## 5. Pseudocode and Python
+
+```python
+def binary_search(a, x):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == x:
+            return mid
+        elif a[mid] < x:
+            lo = mid + 1      # the left half cannot contain x
+        else:
+            hi = mid - 1      # the right half cannot contain x
+    return -1
+```
+
+Two mistakes people make rewriting this from memory:
+
+- Writing `lo = mid` instead of `lo = mid + 1` makes the loop never terminate once the range holds 2 elements.
+- In languages with fixed-width integers, `(lo + hi) // 2` can overflow. The safe form is `lo + (hi - lo) // 2`. Python is immune, but C++ and Java are not, and this bug lived in the Java standard library for years.
+
+## 6. What to take away
+
+Binary search is not an algorithm about arrays. It is an algorithm about **anything monotone**.
+
+If you have a question of the form "the smallest $t$ such that condition $P(t)$ holds", and $P$ once true stays true, then you can binary search on $t$, whether $t$ is a length, a time, or some parameter with no list in sight. The bisection method for finding roots that you met in mathematics is a special case of this idea.

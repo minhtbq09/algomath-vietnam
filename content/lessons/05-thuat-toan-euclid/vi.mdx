@@ -1,0 +1,86 @@
+---
+title: Thuật toán Euclid tìm ƯCLN
+---
+
+## 1. Bài toán mở đầu
+
+> Một mảnh đất hình chữ nhật 252 mét nhân 105 mét cần lát bằng các viên gạch vuông giống hệt nhau, không cắt viên nào. Viên gạch lớn nhất có thể dùng là bao nhiêu?
+
+Cạnh viên gạch phải chia hết cả 252 và 105, và ta muốn nó lớn nhất. Đó chính là ƯCLN(252, 105).
+
+Cách bạn được dạy ở lớp dưới: phân tích ra thừa số nguyên tố. $252 = 2^2 \cdot 3^2 \cdot 7$, $105 = 3 \cdot 5 \cdot 7$, lấy các thừa số chung với số mũ nhỏ nhất được $3 \cdot 7 = 21$.
+
+Cách đó đúng, nhưng nó có một điểm yếu chí mạng mà bạn sẽ thấy ở cuối bài.
+
+## 2. Ý tưởng Toán
+
+Quay lại mảnh đất. Cắt ra một hình vuông 105 nhân 105 ở đầu mảnh đất. Phần còn lại là một hình chữ nhật 105 nhân 42. Cắt tiếp hai hình vuông 42 nhân 42, còn lại 42 nhân 21. Cắt hai hình vuông nữa thì hết sạch.
+
+Điều vừa xảy ra: **viên gạch lát được mảnh đất ban đầu thì cũng lát được phần còn lại, và ngược lại.** Không có thông tin nào bị mất khi ta vứt bỏ phần hình vuông.
+
+Viết bằng số học, với $a = bq + r$:
+
+$$\gcd(a, b) = \gcd(b, r)$$
+
+Chứng minh chỉ gồm hai dòng, và mỗi dòng là một chiều bao hàm:
+
+- Nếu $d \mid a$ và $d \mid b$ thì $d \mid a - bq = r$. Vậy $d$ là ước chung của $b$ và $r$.
+- Nếu $d \mid b$ và $d \mid r$ thì $d \mid bq + r = a$. Vậy $d$ là ước chung của $a$ và $b$.
+
+Hai tập ước chung trùng nhau hoàn toàn, nên phần tử lớn nhất của chúng cũng bằng nhau.
+
+<Note>
+Chú ý điều vừa được chứng minh. Không phải "ƯCLN không đổi" theo kiểu may mắn, mà là **toàn bộ tập ước chung không đổi**. Đó là một mệnh đề mạnh hơn, và nó là lý do thuật toán này đúng chứ không chỉ chạy được.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Mệnh đề trên biến bài toán $(a, b)$ thành bài toán $(b, r)$ nhỏ hơn hẳn, vì $r < b$. Lặp lại thì hai số cứ nhỏ dần. Nó phải dừng, vì một dãy số nguyên không âm giảm nghiêm ngặt thì không thể dài vô hạn.
+
+Dừng khi nào? Khi $r = 0$, tức $b \mid a$. Lúc đó $\gcd(a, b) = b$.
+
+Ba câu hỏi cần trả lời cho mọi thuật toán, ở đây đều có đáp án:
+
+| Câu hỏi | Trả lời cho Euclid |
+| --- | --- |
+| Cần lưu gì? | Đúng hai số $a$ và $b$ |
+| Mỗi bước làm gì? | Thay $(a, b)$ bằng $(b, a \bmod b)$ |
+| Dừng khi nào? | Khi $b = 0$, trả về $a$ |
+
+## 4. Mô phỏng
+
+Đổi hai số ở ô nhập rồi bấm Bắt đầu. Chú ý cột phần dư: nó là thứ điều khiển toàn bộ quá trình.
+
+<Viz name="euclid" />
+
+Thử cặp 89 và 55. Bạn sẽ thấy thuật toán chạy lâu bất thường, và mọi thương số đều bằng 1. Đó không phải trùng hợp. Bài tập cuối bài sẽ hỏi bạn tại sao.
+
+## 5. Pseudocode và Python
+
+```python
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+```
+
+Ba dòng. Cả bài học nằm gọn trong dòng `a, b = b, a % b`, và dòng đó chính là mệnh đề $\gcd(a, b) = \gcd(b, r)$ viết bằng cú pháp Python.
+
+Bản đệ quy còn giống mệnh đề Toán hơn nữa:
+
+```python
+def gcd(a, b):
+    return a if b == 0 else gcd(b, a % b)
+```
+
+## 6. Vì sao cách này hơn hẳn phân tích thừa số
+
+Với 252 và 105, phân tích thừa số nguyên tố nhanh và dễ. Bây giờ thử với hai số này:
+
+$$a = 4{,}294{,}967{,}297 \qquad b = 3{,}215{,}031{,}751$$
+
+Phân tích một số 10 chữ số ra thừa số nguyên tố đã là việc nặng. Với số 200 chữ số thì không máy tính nào trên Trái Đất làm nổi trong đời bạn, và toàn bộ ngành mã hoá RSA dựa đúng vào sự bất lực đó.
+
+Thuật toán Euclid thì không quan tâm. Nó chỉ chia lấy dư. Với hai số 200 chữ số, nó xong trong khoảng vài trăm phép chia.
+
+Đây là bài học lớn hơn cả ƯCLN: **hai lời giải cùng cho một đáp án có thể chênh nhau hàng tỉ lần về chi phí.** Toán học quan tâm câu trả lời tồn tại; thuật toán quan tâm bạn có sống đủ lâu để lấy được nó không.

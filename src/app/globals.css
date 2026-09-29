@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Bitter', Georgia, serif;
+  --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --grid-line: #DCE4F0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F8F9FB;
+  /* Nền vở ô ly: hai lớp kẻ mảnh, mờ đủ để không cạnh tranh với chữ */
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: #14224F;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Lề đỏ dọc của vở ô ly. Dùng làm cột đánh số các bước trong bài học. */
+.margin-rule {
+  position: relative;
+}
+.margin-rule::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: rgba(226, 74, 38, 0.35);
+}
+
+.step-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #E24A26;
+  text-transform: uppercase;
+}
+
+/* Kiểu chữ cho nội dung bài học viết bằng MDX */
+.prose-lesson {
+  font-size: 17px;
+  line-height: 1.75;
+  color: #14224F;
+}
+.prose-lesson > * + * {
+  margin-top: 1.15em;
+}
+.prose-lesson h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2.6em;
+  padding-top: 0.2em;
+}
+.prose-lesson h3 {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+  margin-top: 2em;
+}
+.prose-lesson p {
+  max-width: 68ch;
+}
+.prose-lesson ul,
+.prose-lesson ol {
+  max-width: 66ch;
+  padding-left: 1.3em;
+}
+.prose-lesson ul {
+  list-style: none;
+}
+.prose-lesson ul > li {
+  position: relative;
+}
+.prose-lesson ul > li::before {
+  content: '';
+  position: absolute;
+  left: -1em;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  background: #E24A26;
+}
+.prose-lesson ol {
+  list-style: decimal;
+}
+.prose-lesson li + li {
+  margin-top: 0.4em;
+}
+.prose-lesson strong {
+  font-weight: 600;
+}
+.prose-lesson a {
+  color: #E24A26;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-lesson blockquote {
+  border-left: 3px solid #F5C518;
+  background: #fff;
+  padding: 0.9em 1.2em;
+  font-size: 16px;
+  max-width: 68ch;
+}
+.prose-lesson blockquote p {
+  margin: 0;
+}
+.prose-lesson code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: #EEF1F7;
+  padding: 0.12em 0.35em;
+  border-radius: 3px;
+}
+.prose-lesson pre {
+  background: #14224F;
+  color: #F8F9FB;
+  padding: 1.1em 1.3em;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.prose-lesson pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+.prose-lesson table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.prose-lesson th,
+.prose-lesson td {
+  border-bottom: 1px solid #DCE4F0;
+  padding: 0.6em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+.prose-lesson th {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5B6478;
+}
+
+/* KaTeX hơi to so với cỡ chữ thân bài */
+.prose-lesson .katex {
+  font-size: 1.03em;
+}

@@ -1,0 +1,75 @@
+---
+title: Fast modular exponentiation
+---
+
+## 1. Opening problem
+
+> Compute $3^{1000000} \bmod 1000007$.
+
+The obvious method multiplies 3 by itself a million times, reducing after each step. A computer manages it in about a hundredth of a second. The problem looks solved.
+
+But RSA exponents typically have 600 digits. A million multiplications is fine; $10^{600}$ of them means the universe runs out of time before you get an answer. A completely different idea is needed.
+
+## 2. The mathematical idea
+
+The idea comes from something you learned long ago: **write the exponent in binary**.
+
+Take a small case, $3^{13}$. Since $13 = 8 + 4 + 1$, which is $1101_2$ in binary,
+
+$$3^{13} = 3^{8} \cdot 3^{4} \cdot 3^{1}$$
+
+And the powers of two come from repeated squaring, one multiplication each:
+
+$$3^1 = 3, \quad 3^2 = 9, \quad 3^4 = (3^2)^2 = 81, \quad 3^8 = (3^4)^2 = 6561$$
+
+That is 3 squarings and 2 multiplications instead of 12 multiplications. For an exponent $n$ we need about $2\log_2 n$ multiplications instead of $n$.
+
+That number changes the nature of the problem. For $n = 10^{600}$, $\log_2 n$ is about 2000. Two thousand multiplications finish instantly.
+
+<Note>
+The idea here is not a computational trick. It is the observation that multiplication is associative, combined with the fact that every integer is uniquely a sum of powers of two. Two familiar facts, joined into an algorithm without which the Internet would not work.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Read the exponent from the low bit upward. Keep two variables: `result` accumulating the answer, and `base` holding $a^{2^k}$ at step $k$.
+
+The loop invariant: *at every moment, `result` × `base`^(remaining exponent) equals $a^n$.*
+
+Each pass does two things:
+- If the current bit is 1, multiply `base` into `result`.
+- Square `base` and shift the exponent right by one bit.
+
+With a reduction after each multiplication, no value ever exceeds $m^2$, so nothing overflows.
+
+## 4. Simulation
+
+Follow the bit row at the top and watch the multiplication counter on the right.
+
+<Viz name="fast-pow" />
+
+Try $7^{100} \bmod 10$: an exponent of 100 costs only 12 multiplications. Watch the base column, each squaring jumps it to a whole new power level.
+
+## 5. Pseudocode and Python
+
+```python
+def pow_mod(a, n, m):
+    result = 1
+    base = a % m
+    while n > 0:
+        if n % 2 == 1:              # the current bit is 1
+            result = (result * base) % m
+        base = (base * base) % m    # square for the next bit
+        n //= 2                     # move to the next bit
+    return result
+```
+
+Six lines, working with exponents of hundreds of digits. The complexity is $O(\log n)$ multiplications.
+
+Python has `pow(a, n, m)` built in, and it is faster still, but writing it once by hand tells you why it is fast.
+
+## 6. What to take away
+
+This is the first example in the course of a pattern that will return: **instead of looping $n$ times, find a way to halve $n$ at each step.**
+
+You will meet the same pattern in binary search (lesson 16) and in recursion-tree analysis (lesson 14). Going from $n$ steps to $\log n$ steps is the boundary between "works on small data" and "works on any data".

@@ -1,0 +1,60 @@
+[
+  {
+    "id": "W1",
+    "status": "planned",
+    "date": "Tuần 11 / Week 11",
+    "title": {
+      "vi": "Từ tư duy Toán đến thuật toán",
+      "en": "From Mathematical Thinking to Algorithms"
+    },
+    "summary": {
+      "vi": "Buổi đầu tiên trả lời câu hỏi thuật toán thật ra là gì, vì sao một lời giải Toán chưa chắc đã là một thuật toán, và làm thế nào để viết lại lời giải đó thành các bước máy chạy được. Học sinh làm quen với thuật toán Euclid như ví dụ chính.",
+      "en": "The first session answers what an algorithm really is, why a mathematical solution is not automatically an algorithm, and how to rewrite that solution as steps a machine can run. The Euclidean algorithm is the worked example."
+    },
+    "agenda": [
+      { "minutes": 10, "item": { "vi": "Pre-test và hoạt động khởi động", "en": "Pre-test and warm-up" } },
+      { "minutes": 20, "item": { "vi": "Ý tưởng Toán và thuật toán khác nhau ở chỗ nào", "en": "Where a maths idea and an algorithm differ" } },
+      { "minutes": 20, "item": { "vi": "Thực hành với mô phỏng Euclid", "en": "Hands-on with the Euclid simulation" } },
+      { "minutes": 25, "item": { "vi": "Giải bài tập theo nhóm", "en": "Group exercise session" } },
+      { "minutes": 10, "item": { "vi": "Post-test và form phản hồi", "en": "Post-test and feedback form" } },
+      { "minutes": 5, "item": { "vi": "Tổng kết và hướng dẫn tự học", "en": "Wrap-up and self-study pointers" } }
+    ],
+    "registerUrl": "https://forms.gle/THAY-BANG-LINK-FORM"
+  },
+  {
+    "id": "W2",
+    "status": "planned",
+    "date": "Tuần 13 / Week 13",
+    "title": { "vi": "Khám phá đồ thị", "en": "Discovering Graphs" },
+    "summary": {
+      "vi": "Đồ thị xuất hiện ở khắp nơi trong đời sống trước khi nó xuất hiện trong sách lập trình. Buổi này đi từ bài toán quan hệ quen thuộc đến BFS và DFS, kết thúc bằng bài thực hành tìm đường ngắn nhất trong mê cung.",
+      "en": "Graphs show up everywhere in daily life before they show up in a programming book. This session moves from familiar relation problems to BFS and DFS, ending with a shortest-path maze exercise."
+    },
+    "agenda": [
+      { "minutes": 10, "item": { "vi": "Pre-test và hoạt động khởi động", "en": "Pre-test and warm-up" } },
+      { "minutes": 20, "item": { "vi": "Từ quan hệ đến đỉnh và cạnh", "en": "From relations to vertices and edges" } },
+      { "minutes": 20, "item": { "vi": "Thực hành với mô phỏng BFS", "en": "Hands-on with the BFS simulation" } },
+      { "minutes": 25, "item": { "vi": "Bài tập tìm đường trong mê cung", "en": "Maze pathfinding exercises" } },
+      { "minutes": 10, "item": { "vi": "Post-test và form phản hồi", "en": "Post-test and feedback form" } },
+      { "minutes": 5, "item": { "vi": "Tổng kết và hướng dẫn tự học", "en": "Wrap-up and self-study pointers" } }
+    ]
+  },
+  {
+    "id": "W3",
+    "status": "planned",
+    "date": "Tuần 14 / Week 14",
+    "title": { "vi": "Đệ quy và quy hoạch động", "en": "Recursion and Dynamic Programming" },
+    "summary": {
+      "vi": "Quy nạp toán học và đệ quy là hai cách gọi tên của cùng một ý tưởng. Buổi cuối đi từ quy nạp tới đệ quy, chỉ ra chỗ đệ quy tính lặp lại, rồi xây một bảng quy hoạch động đơn giản.",
+      "en": "Mathematical induction and recursion are two names for one idea. The final session moves from induction to recursion, shows where recursion repeats work, then builds a simple dynamic programming table."
+    },
+    "agenda": [
+      { "minutes": 10, "item": { "vi": "Pre-test và hoạt động khởi động", "en": "Pre-test and warm-up" } },
+      { "minutes": 20, "item": { "vi": "Quy nạp viết lại thành hàm đệ quy", "en": "Rewriting induction as a recursive function" } },
+      { "minutes": 20, "item": { "vi": "Cây đệ quy và chỗ tính lặp", "en": "Recursion trees and repeated work" } },
+      { "minutes": 25, "item": { "vi": "Xây bảng DP cho bài đếm đường đi", "en": "Building a DP table for path counting" } },
+      { "minutes": 10, "item": { "vi": "Post-test và form phản hồi", "en": "Post-test and feedback form" } },
+      { "minutes": 5, "item": { "vi": "Tổng kết và hướng dẫn tự học", "en": "Wrap-up and self-study pointers" } }
+    ]
+  }
+]

@@ -1,0 +1,75 @@
+---
+title: Tìm kiếm nhị phân
+---
+
+## 1. Bài toán mở đầu
+
+> Tôi nghĩ ra một số nguyên từ 1 đến 1000. Mỗi lần bạn đoán, tôi chỉ trả lời "lớn hơn", "nhỏ hơn" hoặc "đúng rồi". Bạn cần bao nhiêu lần đoán để chắc chắn tìm ra?
+
+Hầu như ai chơi trò này vài lần cũng tự tìm ra chiến thuật đoán vào giữa. Câu hỏi thú vị hơn là: vì sao đoán giữa lại là tốt nhất, và làm sao biết 10 lần là đủ?
+
+## 2. Ý tưởng Toán
+
+Trước lần đoán đầu tiên có 1000 khả năng. Sau mỗi câu trả lời, số khả năng còn lại giảm xuống. Nếu bạn đoán số $m$ trong khoảng $[lo, hi]$ thì:
+
+- Trả lời "nhỏ hơn" để lại $m - lo$ khả năng.
+- Trả lời "lớn hơn" để lại $hi - m$ khả năng.
+
+Bạn không điều khiển được câu trả lời, nên phải chuẩn bị cho trường hợp xấu nhất, tức là $\max(m - lo,\; hi - m)$. Biểu thức này nhỏ nhất khi hai phần bằng nhau, tức $m$ nằm chính giữa. Đây là một bài cực trị quen thuộc, và nó là **chứng minh** rằng đoán giữa tối ưu chứ không phải cảm giác.
+
+Sau $k$ lần đoán, số khả năng còn lại nhiều nhất là $n / 2^k$. Muốn còn 1 khả năng, cần $2^k \ge n$, tức
+
+$$k \ge \log_2 n$$
+
+Với $n = 1000$ thì $k = 10$ vì $2^{10} = 1024$.
+
+<Note>
+Con số 2 ở đây không hề thiêng liêng. Nó chỉ phản ánh việc mỗi câu hỏi có 2 kết quả. Nếu công cụ của bạn cho 3 kết quả, chẳng hạn một cái cân thăng bằng, thì đáp số thành $\log_3 n$. Bài tập cuối bài sẽ hỏi đúng chuyện đó.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Điều kiện then chốt là **tính đơn điệu**: dãy phải sắp xếp. Nếu dãy không sắp xếp, câu trả lời "lớn hơn" không loại được bên nào cả, và toàn bộ lập luận sụp đổ.
+
+Trạng thái cần lưu chỉ gồm hai số: $lo$ và $hi$, hai đầu của vùng còn khả năng. Bất biến của thuật toán là:
+
+> Nếu $x$ có mặt trong dãy thì chỉ số của nó nằm trong đoạn $[lo, hi]$.
+
+Bất biến này đúng lúc khởi tạo, và mỗi lần cập nhật $lo$ hoặc $hi$ ta phải kiểm tra nó vẫn đúng. Đó cũng chính là chứng minh tính đúng đắn.
+
+Dừng khi $lo > hi$, tức vùng khả năng rỗng, và khi đó ta kết luận $x$ không có trong dãy.
+
+## 4. Mô phỏng
+
+Chọn một số ở ô trên rồi bấm Bước sau. Chú ý dòng "vùng còn lại" bên dưới: nó là toàn bộ trạng thái của thuật toán.
+
+<Viz name="binary-search" />
+
+Chọn số 40, số không có trong dãy, và chạy tới hết để xem thuật toán kết luận vắng mặt như thế nào.
+
+## 5. Pseudocode và Python
+
+```python
+def tim_kiem_nhi_phan(a, x):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == x:
+            return mid
+        elif a[mid] < x:
+            lo = mid + 1      # nửa trái không thể chứa x
+        else:
+            hi = mid - 1      # nửa phải không thể chứa x
+    return -1
+```
+
+Hai chỗ hay sai khi tự viết lại:
+
+- Viết `lo = mid` thay vì `lo = mid + 1` khiến vòng lặp không bao giờ dừng khi vùng còn 2 phần tử.
+- Với ngôn ngữ dùng số nguyên có giới hạn, `(lo + hi) // 2` có thể tràn số. Cách viết an toàn là `lo + (hi - lo) // 2`. Python không gặp lỗi này, nhưng C++ và Java thì có, và đây là một lỗi từng tồn tại nhiều năm trong thư viện chuẩn của Java.
+
+## 6. Điều đáng nhớ
+
+Tìm kiếm nhị phân không phải là thuật toán về mảng. Nó là thuật toán về **mọi thứ đơn điệu**.
+
+Nếu bạn có một câu hỏi dạng "giá trị nhỏ nhất của $t$ sao cho điều kiện $P(t)$ đúng", và $P$ có tính chất một khi đã đúng thì đúng mãi, thì bạn chặt nhị phân trên $t$ được, dù $t$ là độ dài, thời gian, hay một tham số nào đó chẳng liên quan gì tới danh sách. Phương pháp chia đôi tìm nghiệm phương trình mà bạn học ở môn Toán chính là trường hợp riêng của ý này.

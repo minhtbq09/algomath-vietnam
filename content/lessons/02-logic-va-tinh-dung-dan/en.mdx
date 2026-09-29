@@ -1,0 +1,92 @@
+---
+title: Logic, proof and correctness
+---
+
+## 1. Opening problem
+
+> The numbers 1, 2, 3, ..., 100 are written on a board. Each step you erase any two of them and write their difference, larger minus smaller. Continue until one number remains. Can that final number be even?
+
+Do not try cases. The number of ways to erase is beyond counting. But the answer takes three lines.
+
+The starting sum is $1 + 2 + \dots + 100 = 5050$, an even number. Each step replaces $a$ and $b$ by $|a - b|$, so the sum changes from $a + b$ to $a - b$, dropping by $2b$ when $a > b$. Dropping by an even amount **leaves the parity of the sum unchanged**.
+
+So the sum stays even. When one number remains, that number *is* the sum, so it must be even. The answer is yes, and more than that: it is **forced**.
+
+## 2. The mathematical idea
+
+You just used an **invariant**: a quantity unchanged by every step.
+
+The power of an invariant is that it lets you conclude something about the final state without knowing which path was taken. With 100 numbers the paths are astronomical, but every path preserves parity, so every path leads to the same conclusion.
+
+A proof by invariant always has three parts:
+
+1. **Initialisation.** The invariant holds in the starting state.
+2. **Preservation.** If it holds before a step, it holds after it.
+3. **Termination.** The invariant plus the stopping condition gives the conclusion you wanted.
+
+<Note>
+These three are exactly the structure of mathematical induction, and that is no coincidence. An invariant is induction applied to the number of steps taken so far.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Here is the surprise: **those three parts are how you prove a loop correct**.
+
+Look again at the maximum-finding algorithm from lesson 1:
+
+```python
+def largest(a):
+    m = a[0]
+    for x in a[1:]:
+        if x > m:
+            m = x
+    return m
+```
+
+Its invariant is: *after examining the first $k$ elements, $m$ equals the largest among those $k$.*
+
+- **Initialisation.** After one element, $m = a_0$ is indeed the largest of one element.
+- **Preservation.** Suppose $m$ is largest among the first $k$. Consider element $k+1$. If it exceeds $m$, it is largest among $k+1$ and we assign $m$ to it. Otherwise $m$ still is. Both branches preserve the invariant.
+- **Termination.** The loop ends at $k = n$, so $m$ is largest in the whole list, exactly what is returned.
+
+Proof complete, without running a single case.
+
+This is the line between "code that works on the tests I thought of" and "correct code". Tests tell you the algorithm is not wrong where you looked. An invariant tells you it is not wrong anywhere.
+
+## 4. Simulation
+
+Open [the Euclid simulation](/en/visualizations/euclid/) again and find its invariant yourself. Hint: which quantity survives every division line? Read the step explanations closely, they are stating exactly that invariant.
+
+## 5. Pseudocode and Python
+
+A good habit is to write the invariant as a comment inside the code:
+
+```python
+def binary_search(a, x):
+    lo, hi = 0, len(a) - 1
+    # INVARIANT: if x is in a, its index lies in [lo, hi]
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == x:
+            return mid
+        elif a[mid] < x:
+            lo = mid + 1   # a[lo..mid] are all < x, discarding loses no solution
+        else:
+            hi = mid - 1   # a[mid..hi] are all > x, discarding loses no solution
+    # lo > hi: the range is empty, so x is not in a
+    return -1
+```
+
+The two inner comments explain why each discard is legitimate. If you cannot write such a sentence for a line of code, that line is quite possibly wrong.
+
+## 6. What to take away
+
+Three questions to answer for every loop you write:
+
+| Question | What it guarantees |
+| --- | --- |
+| Which quantity is always true each pass? | Correctness |
+| Which quantity always decreases? | Termination |
+| At the end, what does the invariant tell you? | The return value is right |
+
+You have been answering this kind of question all along in combinatorics problems. Nobody just told you it is also how you check a program.

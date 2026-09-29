@@ -1,0 +1,90 @@
+---
+title: Đường đi ngắn nhất và Dijkstra
+---
+
+## 1. Bài toán mở đầu
+
+> Bản đồ có các thành phố nối bằng đường, mỗi đường ghi số km. Tìm quãng đường ngắn nhất từ Hà Nội tới Cà Mau.
+
+BFS ở bài 10 giải được bài "ít bước nhất". Nhưng ở đây mỗi bước có chi phí khác nhau: một đoạn 5 km và một đoạn 300 km không thể tính như nhau.
+
+Thử áp BFS xem hỏng ở đâu. BFS sẽ tìm ra đường **qua ít thành phố nhất**, mà đường đó rất có thể dài hơn nhiều so với một đường vòng qua nhiều thành phố nhưng toàn đoạn ngắn. BFS đúng khi và chỉ khi mọi cạnh có trọng số bằng nhau.
+
+## 2. Ý tưởng Toán
+
+Gọi $d(v)$ là khoảng cách ngắn nhất từ điểm xuất phát tới $v$. Hai mệnh đề làm nền cho toàn bộ bài này.
+
+**Mệnh đề 1: bất đẳng thức tam giác.** Với mọi cạnh $u \to v$ trọng số $w$:
+
+$$d(v) \le d(u) + w$$
+
+Vì nếu đi tới $u$ bằng đường ngắn nhất rồi đi tiếp cạnh đó, ta được một đường tới $v$ dài $d(u) + w$. Đường ngắn nhất không thể dài hơn.
+
+**Mệnh đề 2: mọi đoạn con của đường ngắn nhất cũng là đường ngắn nhất.** Nếu đường ngắn nhất từ $s$ tới $v$ đi qua $u$, thì đoạn từ $s$ tới $u$ trong đường đó phải là đường ngắn nhất tới $u$. Nếu không, thay đoạn đó bằng đường ngắn hơn sẽ cho đường tới $v$ ngắn hơn, mâu thuẫn.
+
+Mệnh đề 2 là chìa khoá. Nó nói rằng bài toán **có cấu trúc con tối ưu**: lời giải lớn được ghép từ lời giải nhỏ. Bạn sẽ gặp lại đúng tính chất này ở bài 19 dưới cái tên quy hoạch động.
+
+## 3. Chuyển thành thuật toán
+
+Dijkstra dựa trên một quan sát: **đỉnh chưa xử lý có $d$ tạm thời nhỏ nhất thì $d$ đó đã là giá trị cuối cùng.**
+
+Vì sao? Muốn tới đỉnh đó bằng đường ngắn hơn, ta phải đi qua một đỉnh chưa xử lý khác trước, mà mọi đỉnh chưa xử lý đều có $d$ tạm thời lớn hơn hoặc bằng. Cộng thêm một trọng số không âm thì chỉ có thể lớn hơn nữa. Không có đường ngắn hơn.
+
+Chú ý cụm **trọng số không âm**. Đây không phải chi tiết vặt, đó là điều kiện sống còn. Nếu có cạnh âm, lập luận trên sụp đổ và Dijkstra cho kết quả sai. Bài toán có cạnh âm cần thuật toán khác, tên là Bellman-Ford.
+
+Các bước:
+
+1. Đặt $d(s) = 0$, mọi đỉnh khác $d = \infty$.
+2. Lấy đỉnh chưa xử lý có $d$ nhỏ nhất, gọi là $u$. Đánh dấu đã xử lý.
+3. Với mỗi cạnh $u \to v$ trọng số $w$: nếu $d(u) + w < d(v)$ thì cập nhật $d(v) = d(u) + w$.
+4. Lặp lại cho tới khi hết đỉnh.
+
+<Note>
+Chú ý quan hệ với BFS. Nếu mọi cạnh có trọng số 1 thì "đỉnh có $d$ nhỏ nhất" luôn chính là đỉnh ở đầu hàng đợi, và Dijkstra thoái hoá thành BFS. BFS là trường hợp riêng của Dijkstra, không phải một thuật toán khác họ.
+</Note>
+
+## 4. Mô phỏng
+
+Chạy từng bước và chú ý cột hàng đợi ưu tiên bên phải: nó luôn được sắp xếp, và đỉnh trên cùng là đỉnh sắp được chốt.
+
+<Viz name="dijkstra" />
+
+Một chỗ đáng dừng lại: đỉnh C được gán khoảng cách 2 từ rất sớm, nhưng đỉnh B ban đầu được gán 4 rồi sau đó giảm xuống 3 khi đi qua C. Đó chính là bước cập nhật ở dòng 5 của pseudocode, và nó cho thấy vì sao một giá trị tạm thời chưa phải giá trị cuối cùng cho tới khi đỉnh được lấy ra khỏi hàng đợi.
+
+## 5. Pseudocode và Python
+
+```python
+import heapq
+
+def dijkstra(ke, s, n):
+    """ke[u] là danh sách các cặp (v, w) nghĩa là cạnh u→v trọng số w."""
+    d = [float('inf')] * n
+    d[s] = 0
+    hang_uu_tien = [(0, s)]        # (khoảng cách tạm thời, đỉnh)
+
+    while hang_uu_tien:
+        du, u = heapq.heappop(hang_uu_tien)   # lấy đỉnh có d nhỏ nhất
+        if du > d[u]:
+            continue                          # bản cũ đã lỗi thời, bỏ qua
+        for v, w in ke[u]:
+            if d[u] + w < d[v]:
+                d[v] = d[u] + w
+                heapq.heappush(hang_uu_tien, (d[v], v))
+    return d
+```
+
+`heapq` là hàng đợi ưu tiên, cấu trúc luôn cho phép lấy ra phần tử nhỏ nhất trong $O(\log n)$. Đổi hàng đợi thường thành hàng đợi ưu tiên chính là toàn bộ khác biệt giữa BFS và Dijkstra.
+
+Độ phức tạp là $O((n + m)\log n)$.
+
+## 6. Điều đáng nhớ
+
+Ba thuật toán duyệt đồ thị đã học, phân biệt bằng đúng một câu hỏi: **lấy đỉnh nào ra tiếp theo?**
+
+| Thuật toán | Lấy ra đỉnh nào | Dùng khi |
+| --- | --- | --- |
+| BFS | vào sớm nhất | mọi cạnh chi phí bằng nhau |
+| DFS | vào muộn nhất | chỉ cần biết đến được hay không |
+| Dijkstra | có $d$ nhỏ nhất | cạnh có trọng số không âm |
+
+Cùng một khung vòng lặp, đổi cấu trúc dữ liệu là ra ba thuật toán giải ba bài toán khác nhau.

@@ -1,0 +1,104 @@
+---
+title: The recursion tree
+---
+
+## 1. Opening problem
+
+> Here is Fibonacci written straight from the definition. How long does `fib(50)` take?
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+```
+
+This code is correct, short and elegant, and it **cannot run** for $n = 50$. The machine hangs for tens of minutes.
+
+The interesting question is why. The 50th Fibonacci number is only about 12 billion, an ordinary number. The problem is not the size of the result but the number of calls.
+
+## 2. The mathematical idea
+
+Draw the **recursion tree**: each call is a node, its calls are its branches.
+
+`fib(5)` calls `fib(4)` and `fib(3)`. `fib(4)` calls `fib(3)` and `fib(2)`. Notice `fib(3)` has appeared twice, and each appearance grows an identical subtree beneath it.
+
+Let $T(n)$ be the number of calls for `fib(n)`. Then $T(n) = T(n-1) + T(n-2) + 1$, the Fibonacci recurrence itself. Its solution grows geometrically with ratio
+
+$$\varphi = \frac{1 + \sqrt5}{2} \approx 1.618$$
+
+So $T(50) \approx \varphi^{50} \approx 2.5 \times 10^{10}$. Twenty-five billion calls for a result of twelve billion. The tree is enormous, but the number of **distinct values** needed is only 51.
+
+That is the precise diagnosis: the tree has $\varphi^n$ nodes but only $n$ distinct values. Everything else is recomputation.
+
+<Note>
+Not every recursion suffers this. The recursion tree of binary search is a single line, one node per level, $\log n$ in total. Merge sort's tree has $\log n$ levels each costing $O(n)$, giving $O(n\log n)$. Recursion is only slow when branches **overlap**, that is when the same subproblem appears on several branches.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Reading a cost off a recursion tree takes three steps:
+
+1. **How deep is the tree?**
+2. **How many nodes per level?**
+3. **What does each node cost beyond its recursive calls?**
+
+Multiply and add. Common cases:
+
+| Recurrence | Tree | Result |
+| --- | --- | --- |
+| $T(n) = T(n/2) + O(1)$ | 1 branch, $\log n$ levels | $O(\log n)$ |
+| $T(n) = T(n-1) + O(1)$ | 1 branch, $n$ levels | $O(n)$ |
+| $T(n) = 2T(n/2) + O(n)$ | 2 branches, $\log n$ levels, $O(n)$ each | $O(n\log n)$ |
+| $T(n) = 2T(n-1) + O(1)$ | 2 branches, $n$ levels | $O(2^n)$ |
+
+The last two are worth comparing. Both split into 2 branches, but one halves the **size** while the other merely subtracts 1. That small difference is the boundary between $n\log n$ and $2^n$.
+
+When branches overlap, the fix is to **remember results already computed**, called memoization. Each value is computed once and looked up thereafter.
+
+## 4. Simulation
+
+Run `fib(6)` first and note the number of calls. Then tick "Enable the memo table" and run it again.
+
+<Viz name="recursion-tree" />
+
+Same problem, same function, but the second tree is far smaller. The green nodes are calls answered straight from the table, and each green node stands in for an entire subtree that would otherwise have grown there.
+
+## 5. Pseudocode and Python
+
+```python
+# Slow: 2.5 x 10^10 calls at n = 50
+def fib_slow(n):
+    if n <= 1:
+        return n
+    return fib_slow(n - 1) + fib_slow(n - 2)
+
+# Fast: add a memo table, down to n calls
+def fib_fast(n, table=None):
+    if table is None:
+        table = {}
+    if n <= 1:
+        return n
+    if n in table:
+        return table[n]
+    table[n] = fib_fast(n - 1, table) + fib_fast(n - 2, table)
+    return table[n]
+```
+
+Three added lines turn $O(\varphi^n)$ into $O(n)$. At $n = 50$: from tens of minutes to under a millisecond.
+
+Python has a shorter route, one line above the function:
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n):
+    return n if n <= 1 else fib(n - 1) + fib(n - 2)
+```
+
+## 6. What to take away
+
+The recursion tree is the tool for **seeing** a recursive function's cost instead of guessing it.
+
+And it gives a very concrete diagnosis: if the tree has far more nodes than there are distinct subproblems, you are recomputing. The cure is to remember. Lesson 19 pushes this further by dropping recursion altogether and filling a table directly.

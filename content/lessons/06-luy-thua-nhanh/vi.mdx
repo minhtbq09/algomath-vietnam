@@ -1,0 +1,75 @@
+---
+title: Lũy thừa nhanh theo modulo
+---
+
+## 1. Bài toán mở đầu
+
+> Tính $3^{1000000} \bmod 1000007$.
+
+Cách hiển nhiên là nhân 3 với chính nó một triệu lần, lấy dư sau mỗi bước. Máy tính làm được, mất khoảng một phần trăm giây. Bài toán này có vẻ đã xong.
+
+Nhưng số mũ trong mã hoá RSA thường có 600 chữ số. Nhân một triệu lần thì được, nhân $10^{600}$ lần thì vũ trụ hết tuổi trước khi bạn có kết quả. Cần một ý tưởng khác hẳn.
+
+## 2. Ý tưởng Toán
+
+Ý tưởng nằm ở chỗ bạn đã học từ lâu: **viết số mũ trong hệ nhị phân**.
+
+Lấy ví dụ nhỏ, $3^{13}$. Ta có $13 = 8 + 4 + 1$, tức trong nhị phân là $1101_2$. Vậy
+
+$$3^{13} = 3^{8} \cdot 3^{4} \cdot 3^{1}$$
+
+Và các luỹ thừa bậc 2 thì tính được bằng cách bình phương liên tiếp, mỗi bước chỉ tốn một phép nhân:
+
+$$3^1 = 3, \quad 3^2 = 9, \quad 3^4 = (3^2)^2 = 81, \quad 3^8 = (3^4)^2 = 6561$$
+
+Tổng cộng 3 phép bình phương và 2 phép nhân, thay vì 12 phép nhân. Với số mũ $n$, ta cần khoảng $2\log_2 n$ phép nhân thay vì $n$ phép.
+
+Con số đó thay đổi bản chất bài toán. Với $n = 10^{600}$, $\log_2 n$ vào khoảng 2000. Hai nghìn phép nhân, máy làm xong tức thì.
+
+<Note>
+Chú ý ý tưởng ở đây không phải một mẹo tính toán. Nó là quan sát rằng phép nhân có tính kết hợp, cộng với việc mọi số nguyên đều viết được thành tổng các luỹ thừa của 2 một cách duy nhất. Hai sự thật quen thuộc, ghép lại thành một thuật toán mà không có nó thì Internet không hoạt động được.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Đọc số mũ từ bit thấp lên bit cao. Giữ hai biến: `ket_qua` tích luỹ đáp án, và `co_so` giữ $a^{2^k}$ ở bước thứ $k$.
+
+Bất biến của vòng lặp: *ở mọi thời điểm, `ket_qua` × `co_so`^(phần số mũ còn lại) bằng $a^n$.*
+
+Mỗi vòng làm hai việc:
+- Nếu bit hiện tại bằng 1, nhân `co_so` vào `ket_qua`.
+- Bình phương `co_so`, dịch số mũ sang phải một bit.
+
+Cộng thêm phép lấy dư sau mỗi phép nhân, các số không bao giờ vượt quá $m^2$, nên không tràn.
+
+## 4. Mô phỏng
+
+Theo dõi hàng bit ở trên cùng và đếm số phép nhân ở góc phải.
+
+<Viz name="fast-pow" />
+
+Thử bài $7^{100} \bmod 10$: số mũ 100 chỉ tốn 12 phép nhân thay vì 100. Chú ý dòng cơ số, mỗi lần bình phương là nó nhảy sang một bậc luỹ thừa mới.
+
+## 5. Pseudocode và Python
+
+```python
+def luy_thua_mod(a, n, m):
+    ket_qua = 1
+    co_so = a % m
+    while n > 0:
+        if n % 2 == 1:            # bit hiện tại bằng 1
+            ket_qua = (ket_qua * co_so) % m
+        co_so = (co_so * co_so) % m   # bình phương cho bit tiếp theo
+        n //= 2                       # dịch sang bit tiếp theo
+    return ket_qua
+```
+
+Sáu dòng, chạy được với số mũ hàng trăm chữ số. Độ phức tạp là $O(\log n)$ phép nhân.
+
+Python có sẵn hàm `pow(a, n, m)` làm đúng việc này và còn nhanh hơn, nhưng viết tay một lần thì bạn hiểu vì sao nó nhanh.
+
+## 6. Điều đáng nhớ
+
+Đây là ví dụ đầu tiên trong chương trình về một mẫu tư duy sẽ quay lại nhiều lần: **thay vì lặp $n$ lần, hãy tìm cách chia đôi $n$ ở mỗi bước**.
+
+Bạn sẽ gặp lại đúng mẫu này ở tìm kiếm nhị phân (bài 16) và ở phân tích cây đệ quy (bài 14). Chuyển từ $n$ bước xuống $\log n$ bước là ranh giới giữa "chạy được với dữ liệu nhỏ" và "chạy được với mọi dữ liệu".

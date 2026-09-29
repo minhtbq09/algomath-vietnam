@@ -1,0 +1,351 @@
+[
+  {
+    "id": "L02-E1",
+    "lesson": "02-logic-va-tinh-dung-dan",
+    "topic": "Nền tảng",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Trên bảng có các số 1 đến 10. Mỗi bước xoá hai số và viết lên tổng của chúng. Sau 9 bước còn một số. Số đó là bao nhiêu, và vì sao không phụ thuộc thứ tự xoá?",
+      "en": "The numbers 1 to 10 are on a board. Each step erases two of them and writes their sum. After 9 steps one number remains. What is it, and why does the order not matter?"
+    },
+    "hint": { "vi": "Đại lượng nào không đổi qua mỗi bước?", "en": "Which quantity stays the same at every step?" },
+    "solution": {
+      "vi": "Tổng tất cả các số là bất biến: xoá a và b rồi viết a+b không làm tổng thay đổi. Tổng ban đầu là 55, nên số cuối cùng luôn là 55 bất kể xoá theo thứ tự nào.",
+      "en": "The total sum is invariant: erasing a and b and writing a+b leaves the sum unchanged. The initial sum is 55, so the final number is always 55 regardless of order."
+    }
+  },
+  {
+    "id": "L02-E2",
+    "lesson": "02-logic-va-tinh-dung-dan",
+    "topic": "Nền tảng",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Viết bất biến cho vòng lặp sau và dùng nó chứng minh hàm trả về đúng tích của mọi phần tử: `p = 1; for x in a: p = p * x; return p`",
+      "en": "State the invariant of this loop and use it to prove the function returns the product of all elements: `p = 1; for x in a: p = p * x; return p`"
+    },
+    "hint": { "vi": "Sau khi xét k phần tử đầu, p bằng cái gì? Đừng quên kiểm tra trường hợp k = 0.", "en": "After k elements, what does p equal? Do not skip the k = 0 case." },
+    "solution": {
+      "vi": "Bất biến: sau khi xét k phần tử đầu, p bằng tích của k phần tử đó. Khởi tạo: k = 0, p = 1, và tích rỗng theo quy ước bằng 1, đúng. Bảo toàn: nếu p là tích của k phần tử thì p × a[k] là tích của k+1 phần tử. Kết thúc: k = n, p là tích toàn dãy. Chú ý giá trị khởi tạo p = 1 không tuỳ tiện, nó là phần tử đơn vị của phép nhân, đúng như tích rỗng.",
+      "en": "Invariant: after k elements, p equals the product of those k. Initialisation: k = 0, p = 1, and the empty product is 1 by convention, so it holds. Preservation: if p is the product of k elements then p × a[k] is the product of k+1. Termination: k = n, so p is the product of the whole list. Note that p = 1 is not arbitrary; it is the identity for multiplication, matching the empty product."
+    }
+  },
+  {
+    "id": "L02-E3",
+    "lesson": "02-logic-va-tinh-dung-dan",
+    "topic": "Nền tảng",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Một bàn cờ 8×8 bị cắt mất hai ô ở hai góc đối diện. Hỏi có lát kín 62 ô còn lại bằng 31 quân domino 1×2 được không?",
+      "en": "An 8×8 board has two opposite corner squares removed. Can the remaining 62 squares be tiled by 31 dominoes of size 1×2?"
+    },
+    "hint": { "vi": "Tô bàn cờ hai màu xen kẽ. Mỗi quân domino phủ mấy ô mỗi màu?", "en": "Colour the board like a chessboard. How many squares of each colour does one domino cover?" },
+    "solution": {
+      "vi": "Không. Tô bàn cờ đen trắng xen kẽ: mỗi quân domino luôn phủ đúng một ô đen và một ô trắng, nên 31 quân phủ 31 ô mỗi màu. Nhưng hai góc đối diện luôn cùng màu, nên sau khi cắt còn 30 ô màu này và 32 ô màu kia. Không khớp, nên không lát được. Đây là bất biến dùng ở dạng mạnh nhất: chứng minh một việc là bất khả thi mà không cần thử cách nào.",
+      "en": "No. Colour the board alternately: every domino covers exactly one dark and one light square, so 31 dominoes cover 31 of each. But two opposite corners always share a colour, so after removal there are 30 of one colour and 32 of the other. The counts do not match, so no tiling exists. This is the invariant at its most powerful: proving something impossible without trying any arrangement."
+    }
+  },
+
+  {
+    "id": "L04-E1",
+    "lesson": "04-phep-chia-co-du",
+    "topic": "Số học",
+    "difficulty": "easy",
+    "statement": { "vi": "Hôm nay là thứ Hai. Hỏi 2026 ngày nữa là thứ mấy?", "en": "Today is Monday. What day will it be in 2026 days?" },
+    "hint": { "vi": "Chỉ số dư khi chia 7 mới quan trọng.", "en": "Only the remainder modulo 7 matters." },
+    "solution": {
+      "vi": "2026 = 7 × 289 + 3, dư 3. Đếm tiếp 3 ngày từ thứ Hai được thứ Năm.",
+      "en": "2026 = 7 × 289 + 3, remainder 3. Counting 3 days on from Monday gives Thursday."
+    }
+  },
+  {
+    "id": "L04-E2",
+    "lesson": "04-phep-chia-co-du",
+    "topic": "Số học",
+    "difficulty": "medium",
+    "statement": { "vi": "Tìm chữ số tận cùng của 2^2026 mà không tính luỹ thừa đó.", "en": "Find the last digit of 2^2026 without computing the power." },
+    "hint": { "vi": "Liệt kê chữ số tận cùng của 2^1, 2^2, 2^3, ... cho tới khi thấy chu kỳ.", "en": "List the last digit of 2^1, 2^2, 2^3, ... until a cycle appears." },
+    "solution": {
+      "vi": "Chữ số tận cùng lặp theo chu kỳ 4: 2, 4, 8, 6, rồi lặp lại. Vì 2026 = 4 × 506 + 2, số mũ tương ứng vị trí thứ 2 trong chu kỳ, nên chữ số tận cùng là 4.",
+      "en": "The last digits cycle with period 4: 2, 4, 8, 6, then repeat. Since 2026 = 4 × 506 + 2, the exponent lands on the second position, so the last digit is 4."
+    }
+  },
+  {
+    "id": "L04-E3",
+    "lesson": "04-phep-chia-co-du",
+    "topic": "Số học",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Chứng minh quy tắc chia hết cho 11: một số chia hết cho 11 khi và chỉ khi hiệu đan dấu các chữ số của nó chia hết cho 11.",
+      "en": "Prove the divisibility rule for 11: a number is divisible by 11 exactly when the alternating sum of its digits is."
+    },
+    "hint": { "vi": "10 đồng dư mấy theo modulo 11? Rồi xét các luỹ thừa của 10.", "en": "What is 10 congruent to modulo 11? Then consider the powers of 10." },
+    "solution": {
+      "vi": "Vì 10 ≡ −1 (mod 11), ta có 10^k ≡ (−1)^k (mod 11). Một số viết là tổng các chữ số nhân luỹ thừa của 10, nên nó đồng dư với tổng các chữ số nhân dấu đan xen, tức chính là hiệu đan dấu. Hai vế cùng chia hết cho 11 hoặc cùng không. Quy tắc chia hết cho 3 và cho 9 chứng minh y hệt, chỉ khác 10 ≡ 1.",
+      "en": "Since 10 ≡ −1 (mod 11), we get 10^k ≡ (−1)^k (mod 11). A number is the sum of its digits times powers of 10, so it is congruent to the digits with alternating signs, which is the alternating sum. Either both are divisible by 11 or neither is. The rules for 3 and 9 follow identically, using 10 ≡ 1 instead."
+    }
+  },
+
+  {
+    "id": "L06-E1",
+    "lesson": "06-luy-thua-nhanh",
+    "topic": "Số học",
+    "difficulty": "easy",
+    "statement": { "vi": "Viết 25 trong hệ nhị phân, rồi liệt kê những luỹ thừa nào của a cần nhân với nhau để được a^25.", "en": "Write 25 in binary, then list which powers of a must be multiplied to give a^25." },
+    "hint": { "vi": "25 = 16 + 8 + 1.", "en": "25 = 16 + 8 + 1." },
+    "solution": {
+      "vi": "25 = 11001 trong hệ nhị phân, tức 16 + 8 + 1. Vậy a^25 = a^16 × a^8 × a^1. Cần 4 phép bình phương để có a^16 và 2 phép nhân để ghép, tổng 6 phép thay vì 24.",
+      "en": "25 is 11001 in binary, that is 16 + 8 + 1. So a^25 = a^16 × a^8 × a^1. That needs 4 squarings to reach a^16 and 2 multiplications to combine, 6 operations instead of 24."
+    }
+  },
+  {
+    "id": "L06-E2",
+    "lesson": "06-luy-thua-nhanh",
+    "topic": "Số học",
+    "difficulty": "medium",
+    "statement": { "vi": "Lập bảng chạy tay hàm lũy thừa nhanh để tính 2^10 mod 1000, ghi rõ giá trị cơ số và kết quả sau mỗi vòng.", "en": "Trace the fast exponentiation function computing 2^10 mod 1000, recording the base and result after each round." },
+    "hint": { "vi": "10 = 1010 trong nhị phân, nên chỉ hai vòng có nhân vào kết quả.", "en": "10 is 1010 in binary, so only two rounds multiply into the result." },
+    "solution": {
+      "vi": "Vòng 1: n=10 chẵn, kết quả 1, cơ số thành 4. Vòng 2: n=5 lẻ, kết quả 4, cơ số thành 16. Vòng 3: n=2 chẵn, kết quả 4, cơ số thành 256. Vòng 4: n=1 lẻ, kết quả 4×256 = 1024 mod 1000 = 24. Kiểm tra: 2^10 = 1024, dư 24. Khớp.",
+      "en": "Round 1: n=10 even, result 1, base becomes 4. Round 2: n=5 odd, result 4, base becomes 16. Round 3: n=2 even, result 4, base becomes 256. Round 4: n=1 odd, result 4×256 = 1024 mod 1000 = 24. Check: 2^10 = 1024, remainder 24. Correct."
+    }
+  },
+  {
+    "id": "L06-E3",
+    "lesson": "06-luy-thua-nhanh",
+    "topic": "Số học",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Dãy Fibonacci thoả F(n+1) = F(n) + F(n−1). Hãy tìm cách tính F(n) trong O(log n) phép tính, bằng ý tưởng bình phương liên tiếp.",
+      "en": "The Fibonacci sequence satisfies F(n+1) = F(n) + F(n−1). Find a way to compute F(n) in O(log n) operations using the repeated-squaring idea."
+    },
+    "hint": { "vi": "Viết bước chuyển từ cặp (F(n−1), F(n)) sang (F(n), F(n+1)) dưới dạng nhân ma trận 2×2.", "en": "Write the step from (F(n−1), F(n)) to (F(n), F(n+1)) as a 2×2 matrix multiplication." },
+    "solution": {
+      "vi": "Đặt M là ma trận 2×2 với hàng đầu (1, 1) và hàng sau (1, 0). Khi đó M nhân vector cột (F(n), F(n−1)) cho vector (F(n+1), F(n)). Lặp lại n lần nghĩa là tính M mũ n, và luỹ thừa ma trận dùng được đúng thuật toán bình phương liên tiếp vì phép nhân ma trận cũng có tính kết hợp. Chi phí là O(log n) phép nhân ma trận 2×2, mỗi phép 8 phép nhân số. Ý đáng nhớ: thuật toán ở mục 5 không phụ thuộc vào việc đối tượng là số, nó chỉ cần phép nhân kết hợp.",
+      "en": "Let M be the 2×2 matrix with first row (1, 1) and second row (1, 0). Then M times the column vector (F(n), F(n−1)) gives (F(n+1), F(n)). Iterating n times means computing M to the power n, and matrix powers admit the same repeated-squaring algorithm because matrix multiplication is associative. The cost is O(log n) matrix multiplications, each 8 scalar multiplications. The lesson: the algorithm never depended on the objects being numbers, only on the multiplication being associative."
+    }
+  },
+
+  {
+    "id": "L07-E1",
+    "lesson": "07-sang-eratosthenes",
+    "topic": "Số học",
+    "difficulty": "easy",
+    "statement": { "vi": "Trong mô phỏng sàng với n = 60, thuật toán ngừng gạch sau số nguyên tố nào? Giải thích bằng một câu.", "en": "In the sieve simulation with n = 60, after which prime does the striking stop? Explain in one sentence." },
+    "hint": { "vi": "Căn bậc hai của 60 là bao nhiêu?", "en": "What is the square root of 60?" },
+    "solution": {
+      "vi": "Sau số 7, vì căn bậc hai của 60 xấp xỉ 7,75 nên số nguyên tố tiếp theo là 11 đã có 11×11 = 121 vượt quá 60, không còn bội nào để gạch.",
+      "en": "After 7, because the square root of 60 is about 7.75, so the next prime 11 already has 11×11 = 121 beyond 60, leaving no multiples to strike."
+    }
+  },
+  {
+    "id": "L07-E2",
+    "lesson": "07-sang-eratosthenes",
+    "topic": "Số học",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Nếu vòng gạch của p bắt đầu từ 2p thay vì p×p, kết quả có sai không? Nếu không sai thì mất gì?",
+      "en": "If the striking loop for p started at 2p instead of p×p, would the result be wrong? If not, what is lost?"
+    },
+    "hint": { "vi": "Các số giữa 2p và p×p đã bị gạch bởi cái gì rồi?", "en": "What already struck the numbers between 2p and p×p?" },
+    "solution": {
+      "vi": "Kết quả vẫn đúng, chỉ chậm hơn. Mọi bội kp với k < p đều có thừa số nguyên tố nhỏ hơn p, nên đã bị gạch ở vòng của thừa số đó rồi. Gạch lại chỉ tốn thời gian mà không đổi kết quả. Đây là ví dụ về một tối ưu không ảnh hưởng tính đúng đắn, dạng tối ưu an toàn nhất để áp dụng.",
+      "en": "The result stays correct, only slower. Every multiple kp with k < p has a prime factor below p, so it was already struck during that factor's pass. Striking again costs time without changing anything. This is an optimisation that cannot affect correctness, the safest kind to apply."
+    }
+  },
+  {
+    "id": "L07-E3",
+    "lesson": "07-sang-eratosthenes",
+    "topic": "Số học",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Sửa thuật toán sàng để mỗi ô ghi thừa số nguyên tố NHỎ NHẤT của số đó, thay vì chỉ ghi nguyên tố hay không. Bảng này dùng để làm gì?",
+      "en": "Modify the sieve so each cell records the SMALLEST prime factor of that number, instead of just prime or not. What is such a table good for?"
+    },
+    "hint": { "vi": "Khi gạch một số, chỉ ghi đè nếu ô đó chưa có giá trị.", "en": "When striking a number, only write if the cell is still empty." },
+    "solution": {
+      "vi": "Sửa một dòng: khi gạch số k trong vòng của p, nếu ô k chưa có giá trị thì ghi p vào. Vì các số nguyên tố p được duyệt tăng dần, giá trị được ghi đầu tiên chính là thừa số nguyên tố nhỏ nhất. Bảng này cho phép phân tích một số ra thừa số nguyên tố trong O(log n) bằng cách chia liên tiếp cho thừa số nhỏ nhất, thay vì thử chia tới căn bậc hai mỗi lần. Rất hữu ích khi cần phân tích hàng triệu số.",
+      "en": "Change one line: when striking k during p's pass, write p only if the cell is still empty. Because the primes p are processed in increasing order, the first value written is the smallest prime factor. Such a table factors any number in O(log n) by repeatedly dividing by its smallest factor, instead of trial division up to the square root each time. Very useful when factoring millions of numbers."
+    }
+  },
+
+  {
+    "id": "L11-E1",
+    "lesson": "11-dfs-va-lien-thong",
+    "topic": "Đồ thị",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Chạy mô phỏng DFS và mô phỏng BFS trên cùng mê cung. Ô nào được thăm sớm hơn ở DFS so với BFS, và điều đó nói lên gì về hình dạng duyệt?",
+      "en": "Run the DFS and BFS simulations on the same maze. Which cells are visited earlier under DFS than under BFS, and what does that say about the traversal shape?"
+    },
+    "hint": { "vi": "Nhìn các ô ở xa điểm xuất phát nhưng nằm trên nhánh đầu tiên.", "en": "Look at cells far from the start but on the first branch explored." },
+    "solution": {
+      "vi": "DFS thăm rất sớm những ô ở xa nhưng nằm trên nhánh đầu tiên nó chọn, trong khi BFS chỉ tới đó sau khi đã quét hết các ô gần hơn. Điều này cho thấy thứ tự thăm của DFS không phản ánh khoảng cách, nên không dùng được cho bài đường đi ngắn nhất.",
+      "en": "DFS reaches distant cells very early if they lie on the first branch it picks, while BFS only gets there after sweeping all nearer cells. This shows DFS visiting order carries no distance information, so it cannot be used for shortest paths."
+    }
+  },
+  {
+    "id": "L11-E2",
+    "lesson": "11-dfs-va-lien-thong",
+    "topic": "Đồ thị",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Cho lưới 5×5, ô đất ký hiệu là dấu chấm: hàng 1 và 2 là '..###', '..###', hàng 3 là '#####', hàng 4 và 5 là '###..', '###..'. Có bao nhiêu mảnh đất? Chạy tay và giải thích.",
+      "en": "Given a 5×5 grid with land marked by dots: rows 1 and 2 are '..###', '..###', row 3 is '#####', rows 4 and 5 are '###..', '###..'. How many land components are there? Trace it and explain."
+    },
+    "hint": { "vi": "Hàng 3 toàn tường, nó chia lưới làm hai nửa không nối nhau.", "en": "Row 3 is solid wall, splitting the grid into two disconnected halves." },
+    "solution": {
+      "vi": "Hai mảnh. Bốn ô đất ở góc trên trái nối nhau thành một mảnh, bốn ô ở góc dưới phải thành mảnh thứ hai. Hàng 3 toàn tường nên không có đường nào nối hai nhóm. Vòng lặp ngoài trong hàm đếm sẽ khởi động DFS đúng hai lần, mỗi lần cho một lớp tương đương.",
+      "en": "Two components. The four land cells in the top-left form one, the four in the bottom-right form another. Row 3 is solid wall so no path joins them. The outer loop in the counting function starts DFS exactly twice, once per equivalence class."
+    }
+  },
+  {
+    "id": "L11-E3",
+    "lesson": "11-dfs-va-lien-thong",
+    "topic": "Đồ thị",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Bản DFS đệ quy tràn ngăn xếp với lưới 1000×1000 toàn ô đất. Giải thích vì sao, và cho biết bản BFS có gặp vấn đề tương tự không.",
+      "en": "The recursive DFS overflows the stack on a 1000×1000 all-land grid. Explain why, and say whether BFS has the same problem."
+    },
+    "hint": { "vi": "Độ sâu đệ quy tối đa bằng độ dài đường đi dài nhất mà DFS đi được.", "en": "The maximum recursion depth equals the longest path DFS can walk." },
+    "solution": {
+      "vi": "DFS đi sâu theo một nhánh trước khi quay lại, nên độ sâu đệ quy có thể lên tới số ô, tức một triệu. Mỗi mức đệ quy chiếm một khung trên ngăn xếp lời gọi, mà ngăn xếp thường chỉ chịu được vài nghìn mức. BFS không gặp vấn đề này vì nó dùng vòng lặp với hàng đợi trên vùng nhớ heap, không dùng ngăn xếp lời gọi. Cách sửa cho DFS là viết bản dùng ngăn xếp tường minh, đúng như bản trong mô phỏng.",
+      "en": "DFS dives deep along one branch before backtracking, so the recursion depth can reach the number of cells, a million. Each level takes a frame on the call stack, which typically holds only a few thousand. BFS does not have this problem because it uses a loop with a queue on the heap, not the call stack. The fix for DFS is an explicit-stack version, exactly the one used in the simulation."
+    }
+  },
+
+  {
+    "id": "L13-E1",
+    "lesson": "13-de-quy-tu-quy-nap",
+    "topic": "Đệ quy",
+    "difficulty": "easy",
+    "statement": { "vi": "Viết hàm đệ quy tính n giai thừa, chỉ rõ trường hợp cơ sở và bài toán nhỏ hơn.", "en": "Write a recursive factorial function, naming the base case and the smaller subproblem." },
+    "hint": { "vi": "0 giai thừa bằng 1 theo định nghĩa.", "en": "0 factorial is 1 by definition." },
+    "solution": {
+      "vi": "Cơ sở: n = 0 trả về 1. Bài nhỏ hơn: (n−1) giai thừa. Ghép: nhân n vào. Code là `def gt(n): return 1 if n == 0 else n * gt(n - 1)`. Chọn cơ sở là 0 chứ không phải 1 để hàm chạy đúng với đầu vào 0.",
+      "en": "Base case: n = 0 returns 1. Smaller subproblem: (n−1) factorial. Combine: multiply by n. The code is `def fact(n): return 1 if n == 0 else n * fact(n - 1)`. Using 0 rather than 1 as the base makes the function correct on input 0."
+    }
+  },
+  {
+    "id": "L13-E2",
+    "lesson": "13-de-quy-tu-quy-nap",
+    "topic": "Đệ quy",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Chứng minh bằng quy nạp rằng thuật toán Tháp Hà Nội cần đúng 2^n − 1 nước đi với n đĩa.",
+      "en": "Prove by induction that the Towers of Hanoi algorithm uses exactly 2^n − 1 moves for n disks."
+    },
+    "hint": { "vi": "Đặt T(n) là số nước, viết hệ thức từ ba bước của thuật toán.", "en": "Let T(n) be the move count and write a recurrence from the algorithm's three steps." },
+    "solution": {
+      "vi": "Thuật toán làm ba việc: chuyển n−1 đĩa, chuyển 1 đĩa, chuyển n−1 đĩa. Vậy T(n) = 2T(n−1) + 1 với T(0) = 0. Cơ sở: T(0) = 0 = 2^0 − 1, đúng. Bước quy nạp: giả sử T(n−1) = 2^(n−1) − 1, khi đó T(n) = 2(2^(n−1) − 1) + 1 = 2^n − 2 + 1 = 2^n − 1. Xong.",
+      "en": "The algorithm does three things: move n−1 disks, move 1 disk, move n−1 disks. So T(n) = 2T(n−1) + 1 with T(0) = 0. Base: T(0) = 0 = 2^0 − 1, correct. Step: assuming T(n−1) = 2^(n−1) − 1, we get T(n) = 2(2^(n−1) − 1) + 1 = 2^n − 2 + 1 = 2^n − 1. Done."
+    }
+  },
+  {
+    "id": "L13-E3",
+    "lesson": "13-de-quy-tu-quy-nap",
+    "topic": "Đệ quy",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Viết hàm đệ quy sinh mọi tập con của một tập n phần tử. Có bao nhiêu tập con, và vì sao cấu trúc đệ quy tự nhiên khớp với câu trả lời đó?",
+      "en": "Write a recursive function generating all subsets of an n-element set. How many subsets are there, and why does the recursive structure match that count naturally?"
+    },
+    "hint": { "vi": "Với mỗi phần tử chỉ có hai khả năng: có mặt hoặc không.", "en": "Each element has exactly two possibilities: in or out." },
+    "solution": {
+      "vi": "Với phần tử đầu tiên có hai lựa chọn, lấy hoặc không lấy, rồi đệ quy trên phần còn lại: `def tap_con(a): return [[]] if not a else [s for t in tap_con(a[1:]) for s in ([a[0]] + t, t)]`. Số tập con là 2^n vì mỗi mức đệ quy nhân đôi số kết quả, và cây đệ quy có n mức. Đây là ví dụ đẹp về việc số lượng lời giải và hình dạng cây đệ quy là cùng một sự thật viết hai cách.",
+      "en": "The first element has two options, in or out, then recurse on the rest: `def subsets(a): return [[]] if not a else [s for t in subsets(a[1:]) for s in ([a[0]] + t, t)]`. There are 2^n subsets because each recursion level doubles the result count and the tree has n levels. This is a clean case where the number of solutions and the shape of the recursion tree are the same fact stated twice."
+    }
+  },
+
+  {
+    "id": "L17-E1",
+    "lesson": "17-tu-duy-greedy",
+    "topic": "Greedy",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Tìm phản ví dụ cho chiến thuật chọn hoạt động có thời lượng ngắn nhất trước. Bốn hoạt động là đủ.",
+      "en": "Find a counterexample to the greedy rule 'pick the shortest activity first'. Four activities suffice."
+    },
+    "hint": { "vi": "Đặt một hoạt động ngắn vắt ngang qua điểm giao của hai hoạt động dài.", "en": "Place one short activity straddling the join between two long ones." },
+    "solution": {
+      "vi": "Lấy ba hoạt động: (1, 5), (4, 6), (5, 9). Hoạt động (4, 6) ngắn nhất nên greedy chọn nó, và nó chồng lấn cả hai hoạt động kia, cho kết quả 1. Nhưng chọn (1, 5) và (5, 9) được 2. Tiêu chí thời lượng ngắn nhất thất bại vì nó bỏ qua chuyện hoạt động ngắn nằm ở đâu.",
+      "en": "Take three activities: (1, 5), (4, 6), (5, 9). The shortest is (4, 6), so greedy takes it, and it overlaps both others, giving 1. But choosing (1, 5) and (5, 9) gives 2. The shortest-duration rule fails because it ignores where the short activity sits."
+    }
+  },
+  {
+    "id": "L17-E2",
+    "lesson": "17-tu-duy-greedy",
+    "topic": "Greedy",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Bạn cần đi xe từ A tới B, dọc đường có các trạm xăng ở những vị trí biết trước, bình xăng đi được tối đa D km. Hãy nêu chiến thuật tham lam để dừng ít lần nhất và chứng minh nó tối ưu.",
+      "en": "You drive from A to B past fuel stations at known positions, with a tank range of D km. State a greedy strategy minimising the number of stops and prove it optimal."
+    },
+    "hint": { "vi": "Dùng lập luận trao đổi: so sánh trạm dừng đầu tiên của lời giải tham lam với của một lời giải tối ưu bất kỳ.", "en": "Use an exchange argument: compare the first stop of the greedy solution with that of any optimal one." },
+    "solution": {
+      "vi": "Chiến thuật: luôn đi xa nhất có thể, tức dừng ở trạm cuối cùng còn trong tầm D km. Chứng minh trao đổi: gọi g là trạm greedy chọn đầu tiên và S là một lời giải tối ưu với trạm đầu là f. Vì greedy đi xa nhất nên f không xa hơn g, nghĩa là từ g ta còn đi được ít nhất bằng từ f. Thay f bằng g trong S vẫn cho lời giải hợp lệ với cùng số trạm. Lặp lại lập luận cho các trạm sau, ta biến S thành đúng lời giải greedy mà không tăng số trạm. Vậy greedy tối ưu.",
+      "en": "Strategy: always drive as far as possible, stopping at the last station within range D. Exchange proof: let g be greedy's first stop and S an optimal solution with first stop f. Since greedy goes furthest, f is no further than g, so from g you can reach at least as far as from f. Replacing f by g in S keeps it valid with the same number of stops. Repeating for later stops transforms S into the greedy solution without increasing the count. Hence greedy is optimal."
+    }
+  },
+
+  {
+    "id": "L19-E1",
+    "lesson": "19-quy-hoach-dong",
+    "topic": "Quy hoạch động",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Trong mô phỏng bảng DP, tìm một ô có giá trị 0 dù nó không phải ô bị chặn. Giải thích vì sao.",
+      "en": "In the DP table simulation, find a cell whose value is 0 even though it is not blocked. Explain why."
+    },
+    "hint": { "vi": "Ô đó bị các ô chặn cắt đứt khỏi mọi đường từ góc trên trái.", "en": "That cell is cut off from the top-left corner by the blocked cells." },
+    "solution": {
+      "vi": "Một ô mang giá trị 0 mà không bị chặn nghĩa là mọi đường tới nó đều phải đi qua ô bị chặn, nên không đường nào tồn tại. Bảng DP tự phát hiện điều này mà không cần kiểm tra riêng: tổng của các ô nguồn đều bằng 0 thì kết quả bằng 0.",
+      "en": "An unblocked cell holding 0 means every path to it must pass through a blocked cell, so no path exists. The DP table detects this on its own without a special check: if all source cells are 0, the sum is 0."
+    }
+  },
+  {
+    "id": "L19-E2",
+    "lesson": "19-quy-hoach-dong",
+    "topic": "Quy hoạch động",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Định nghĩa trạng thái và viết hệ thức truy hồi cho bài: cho dãy số, tìm tổng lớn nhất của một dãy con liên tiếp.",
+      "en": "Define the state and write the recurrence for: given a list of numbers, find the largest sum of a contiguous sublist."
+    },
+    "hint": { "vi": "Đặt f(i) là tổng lớn nhất của dãy con KẾT THÚC tại vị trí i, chứ không phải trong i phần tử đầu.", "en": "Let f(i) be the best sum of a sublist ENDING at position i, not the best within the first i elements." },
+    "solution": {
+      "vi": "Trạng thái: f(i) là tổng lớn nhất của dãy con liên tiếp kết thúc đúng tại i. Truy hồi: f(i) = max(a[i], f(i−1) + a[i]), vì dãy con kết thúc tại i hoặc chỉ gồm a[i], hoặc nối tiếp dãy con tốt nhất kết thúc tại i−1. Đáp án là max của mọi f(i). Điểm mấu chốt là chọn trạng thái có ràng buộc kết thúc tại i, nếu định nghĩa lỏng hơn thì không viết được truy hồi.",
+      "en": "State: f(i) is the largest sum of a contiguous sublist ending exactly at i. Recurrence: f(i) = max(a[i], f(i−1) + a[i]), since a sublist ending at i either is just a[i] or extends the best one ending at i−1. The answer is the max over all f(i). The key is pinning the state to end at i; a looser definition admits no recurrence."
+    }
+  },
+  {
+    "id": "L20-E1",
+    "lesson": "20-ung-dung-dp",
+    "topic": "Quy hoạch động",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Với hệ mệnh giá 1, 3, 4, lập bảng f(t) cho t từ 0 đến 8 và chỉ ra chỗ đầu tiên greedy khác kết quả tối ưu.",
+      "en": "For coin values 1, 3, 4, build the table f(t) for t from 0 to 8 and identify the first place greedy differs from the optimum."
+    },
+    "hint": { "vi": "f(t) = 1 + min của f(t−1), f(t−3), f(t−4) nếu các chỉ số hợp lệ.", "en": "f(t) = 1 + min of f(t−1), f(t−3), f(t−4) where the indices are valid." },
+    "solution": {
+      "vi": "Bảng f từ t=0 tới 8 là: 0, 1, 2, 1, 1, 2, 2, 2, 2. Greedy khác lần đầu tại t = 6: greedy lấy 4 rồi hai tờ 1 thành 3 tờ, còn tối ưu là 3+3 tức 2 tờ. Chú ý t = 5 thì cả hai đều cho 2, nên nếu chỉ thử tới 5 bạn sẽ không phát hiện lỗi.",
+      "en": "The table f from t=0 to 8 is: 0, 1, 2, 1, 1, 2, 2, 2, 2. The first difference is at t = 6: greedy takes 4 then two 1s for 3 coins, while the optimum is 3+3, only 2 coins. Note that at t = 5 both give 2, so testing only up to 5 hides the bug."
+    }
+  },
+  {
+    "id": "L20-E2",
+    "lesson": "20-ung-dung-dp",
+    "topic": "Quy hoạch động",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Bài cái túi có độ phức tạp O(n × W). Vì sao đây KHÔNG phải là thuật toán đa thức theo kích thước dữ liệu đầu vào?",
+      "en": "The knapsack DP runs in O(n × W). Why is this NOT a polynomial-time algorithm in the input size?"
+    },
+    "hint": { "vi": "Số W được ghi vào máy bằng bao nhiêu chữ số, chứ không phải W lớn cỡ nào.", "en": "How many digits does W take to write down, rather than how large W is." },
+    "solution": {
+      "vi": "Kích thước dữ liệu đầu vào tính theo số ký tự cần để ghi nó, và số W chỉ tốn khoảng log W chữ số. Vậy chi phí O(n × W) là hàm mũ theo số chữ số của W, chứ không phải đa thức. Với W = 10^18, bảng có 10^18 ô dù đề bài chỉ dài vài chục ký tự. Thuật toán loại này gọi là đa thức giả, và bài cái túi thực chất thuộc lớp NP-khó. Đây là ranh giới giữa thuật toán phổ thông và lý thuyết độ phức tạp, một hướng bạn có thể tìm hiểu tiếp sau chương trình này.",
+      "en": "Input size is measured by the characters needed to write it, and W takes only about log W digits. So O(n × W) is exponential in the number of digits of W, not polynomial. With W = 10^18 the table has 10^18 cells even though the problem statement is a few dozen characters long. Algorithms like this are called pseudo-polynomial, and knapsack is in fact NP-hard. This is the boundary between school algorithms and complexity theory, a natural direction to explore after this course."
+    }
+  }
+]

@@ -1,0 +1,68 @@
+---
+title: Division with remainder and congruence
+---
+
+## 1. Opening problem
+
+> Today is Wednesday. What day will it be 1000 days from now?
+
+Nobody counts 1000 days. You compute $1000 \div 7 = 142$ remainder $6$, then count 6 days on from Wednesday to reach Tuesday.
+
+What you just did: **throw away everything divisible by 7 because it cannot affect the answer**. Only the remainder carries information.
+
+## 2. The mathematical idea
+
+The division theorem states that for any integer $a$ and positive integer $b$ there is a **unique** pair $(q, r)$ with
+
+$$a = bq + r, \qquad 0 \le r < b$$
+
+The word "unique" matters. It lets us write $a \bmod b$ as a function: one input, exactly one output.
+
+Two numbers with the same remainder modulo $m$ are **congruent modulo $m$**, written $a \equiv b \pmod m$. This relation splits the integers into $m$ classes, and what makes it useful is three properties:
+
+$$a \equiv b, \; c \equiv d \implies a + c \equiv b + d, \quad a - c \equiv b - d, \quad ac \equiv bd \pmod m$$
+
+In other words addition, subtraction and multiplication all pass through the remainder. You may reduce first and then compute, or compute and then reduce; the result is the same.
+
+<Note>
+Note that division is **not** on the list. $6 \equiv 2 \pmod 4$, but dividing both sides by 2 gives $3 \equiv 1 \pmod 4$, which is false. Division modulo $m$ is a different matter and needs a coprimality condition. Lesson 6 touches on it.
+</Note>
+
+## 3. Turning it into an algorithm
+
+The "reduce before or after" property is what saves computers from overflow.
+
+Try finding the last digit of $7^{100}$. Computing $7^{100}$ first and then reducing modulo 10 needs an 85-digit number. But the last digit *is* the remainder modulo 10, so we can reduce after every multiplication:
+
+$$7^1 \equiv 7, \quad 7^2 \equiv 9, \quad 7^3 \equiv 3, \quad 7^4 \equiv 1, \quad 7^5 \equiv 7, \dots \pmod{10}$$
+
+A cycle of 4. Since $100 = 4 \times 25$, we get $7^{100} \equiv 1 \pmod{10}$. The last digit is 1, computable in your head.
+
+One trap worth knowing: in many programming languages `%` on negative numbers does not return the mathematical remainder. In C++ and Java, `-7 % 3` is `-1`, not `2`. Python returns `2`, matching the mathematics. When you need a non-negative remainder in C++, write `((a % m) + m) % m`.
+
+## 4. Simulation
+
+This lesson has no simulation of its own. Open [the Euclidean algorithm](/en/visualizations/euclid/) and watch the remainder column: every one of its lines is an application of the division theorem from section 2.
+
+## 5. Pseudocode and Python
+
+```python
+# Last-digit cycle: reduce after each step so numbers never grow
+def last_digit_cycle(a):
+    seen = []
+    x = a % 10
+    while x not in seen:
+        seen.append(x)
+        x = (x * a) % 10
+    return seen
+
+# Divisibility by 3 through the digit sum
+def divisible_by_3(n):
+    return sum(int(c) for c in str(n)) % 3 == 0
+```
+
+The second function rests on a statement you have used since primary school but may never have proved: since $10 \equiv 1 \pmod 3$, every power of 10 is also congruent to 1, so a number is congruent to the sum of its digits modulo 3. The rule "digit sum divisible by 3" is just a consequence.
+
+## 6. What to take away
+
+Modulo is not a side operation. It is a tool for **shrinking the problem space**: from infinitely many integers down to exactly $m$ classes. When a problem repeats with a period, there is almost certainly a modulo hiding somewhere in it.

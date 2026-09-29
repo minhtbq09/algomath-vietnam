@@ -1,0 +1,96 @@
+---
+title: 'Applications: paths, coins, knapsack'
+---
+
+## 1. Opening problem
+
+> Your backpack holds 10 kg. There are 4 items: A weighs 5 kg and is worth 10 points, B weighs 4 kg worth 40, C weighs 6 kg worth 30, D weighs 3 kg worth 50. Choose items to maximise total value.
+
+Try greedy by value: take D (50), then B (40), giving 7 kg and 90 points. Three kilos remain with nothing that fits. Result 90.
+
+Greedy happens to be right here, but that is luck. Shift the numbers slightly and it fails, and lesson 18 showed that luck is not something to rely on.
+
+## 2. The mathematical idea
+
+This closing lesson shows that three problems which look nothing alike are really **one template**, differing only in the state definition.
+
+**Problem 1: counting paths on a grid.**
+State: $f(r,c)$ is the number of paths to cell $(r,c)$.
+Recurrence: $f(r,c) = f(r-1,c) + f(r,c-1)$.
+
+**Problem 2: coin change with fewest coins.**
+State: $f(t)$ is the fewest coins making exactly $t$.
+Recurrence: $f(t) = 1 + \min_{c \in C, \; c \le t} f(t - c)$.
+
+Note this is the very problem where greedy failed in lesson 18. DP solves it correctly for **every** coin system, with no assumptions.
+
+**Problem 3: the knapsack.**
+State: $f(i, w)$ is the greatest value using the first $i$ items with capacity $w$.
+Recurrence: for item $i$ of weight $w_i$ and value $v_i$,
+
+$$f(i, w) = \max\big(\underbrace{f(i-1, w)}_{\text{skip it}}, \; \underbrace{f(i-1, w - w_i) + v_i}_{\text{take it}}\big)$$
+
+Three problems, three recurrences, one four-step procedure from lesson 19.
+
+<Note>
+What is new in the knapsack is that the state has **two dimensions**. Using $f(w)$ alone is not enough, because we must know which items have been considered to avoid taking one twice. When a problem gains a constraint, put the constraint into the state. This is exactly the idea from the last exercise of lesson 10, where the maze was doubled into two layers to remember whether a wall had been broken.
+</Note>
+
+## 3. Turning it into an algorithm
+
+The three problems side by side, so the template shows:
+
+| | Paths | Coins | Knapsack |
+| --- | --- | --- | --- |
+| State | $f(r,c)$ | $f(t)$ | $f(i,w)$ |
+| Dimensions | 2 | 1 | 2 |
+| Combining operation | sum | min | max |
+| Base | $f(0,0)=1$ | $f(0)=0$ | $f(0,w)=0$ |
+| Cost | $O(RC)$ | $O(t \cdot \lvert C\rvert)$ | $O(n \cdot W)$ |
+
+Three different combining operations, sum for counting, min and max for optimising, but the structure is identical.
+
+## 4. Simulation
+
+Open [the DP table simulation](/en/visualizations/dp-grid/) again and picture the knapsack version: instead of coordinates, the two dimensions are "which item" and "remaining capacity"; instead of adding two cells, take the max of two. The filling picture is the same.
+
+## 5. Pseudocode and Python
+
+```python
+def knapsack(items, capacity):
+    """items is a list of (weight, value) pairs."""
+    n = len(items)
+    f = [[0] * (capacity + 1) for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        weight, value = items[i - 1]
+        for w in range(capacity + 1):
+            f[i][w] = f[i - 1][w]                              # skip item i
+            if weight <= w:
+                f[i][w] = max(f[i][w], f[i - 1][w - weight] + value)   # take item i
+    return f[n][capacity]
+
+stuff = [(5, 10), (4, 40), (6, 30), (3, 50)]
+print(knapsack(stuff, 10))    # 90
+
+
+def coin_change(coins, amount):
+    f = [0] + [float('inf')] * amount
+    for t in range(1, amount + 1):
+        for c in coins:
+            if c <= t and f[t - c] + 1 < f[t]:
+                f[t] = f[t - c] + 1
+    return f[amount] if f[amount] != float('inf') else None
+
+print(coin_change([1, 3, 4], 6))    # 2, exactly as lesson 18 showed
+```
+
+## 6. What to take away
+
+This is the last lesson, so look back at the whole path.
+
+You began in lesson 1 with a coin-weighing puzzle and learned that a mathematical solution is not yet an algorithm. Then invariants in lesson 2 turned out to be how loops are proved correct. Division with remainder led to Euclid. Relations led to graphs. Induction led to recursion. And recursion with overlapping subproblems led to dynamic programming.
+
+Not one step in that chain required a new ability. Each step was only rewriting a mathematical idea you already had, in a form a machine can follow.
+
+That is the whole argument of AlgoMath. You are not learning a new subject. You are learning a second language for the one you already know.

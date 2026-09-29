@@ -1,0 +1,85 @@
+---
+title: Độ phức tạp qua cách đếm phép tính
+---
+
+## 1. Bài toán mở đầu
+
+> Hai bạn cùng viết chương trình giải một bài toán. Chương trình của A chạy 2 giây với dữ liệu 1000 phần tử. Chương trình của B chạy 8 giây với cùng dữ liệu đó. Ai viết chương trình tốt hơn?
+
+Câu trả lời trung thực là: **chưa đủ dữ kiện**. Với 1000 phần tử thì A nhanh gấp 4 lần. Nhưng nếu A cần $n^2$ phép tính còn B cần $50n$, thì tại $n = 100{,}000$, A cần hàng giờ trong khi B xong trong tích tắc.
+
+Cái quyết định không phải con số giây, mà là **tốc độ tăng khi dữ liệu lớn lên**.
+
+## 2. Ý tưởng Toán
+
+Bạn đã có sẵn công cụ cho việc này: so sánh bậc tăng của các hàm số.
+
+Xét ba hàm quen thuộc trên đoạn $n$ từ 1 đến 20 thì chúng chẳng khác nhau mấy. Nhưng khi $n \to \infty$:
+
+$$\log_2 n \;\ll\; n \;\ll\; n\log_2 n \;\ll\; n^2 \;\ll\; 2^n$$
+
+Bảng dưới đây cho thấy sự chênh lệch rõ hơn mọi lời giải thích. Giả sử máy làm được $10^9$ phép tính mỗi giây:
+
+| $n$ | $n$ | $n\log_2 n$ | $n^2$ | $2^n$ |
+| --- | --- | --- | --- | --- |
+| 20 | tức thì | tức thì | tức thì | 1 ms |
+| 1 000 | tức thì | tức thì | 1 ms | vũ trụ chưa đủ già |
+| 1 000 000 | 1 ms | 20 ms | 17 phút | vũ trụ chưa đủ già |
+| 1 000 000 000 | 1 giây | 30 giây | 31 năm | vũ trụ chưa đủ già |
+
+## 3. Chuyển thành thuật toán
+
+Cách đếm trong thực tế đơn giản hơn bạn tưởng. Bạn không đếm từng phép cộng, bạn đếm **số lần thân vòng lặp trong cùng được thực hiện**.
+
+Vài mẫu hay gặp:
+
+- Một vòng lặp chạy $n$ lần: $O(n)$.
+- Vòng lặp lồng nhau, mỗi vòng $n$ lần: $O(n^2)$.
+- Vòng ngoài $i$ từ 1 đến $n$, vòng trong $j$ từ $i$ đến $n$: tổng là $n + (n-1) + \dots + 1 = \dfrac{n(n+1)}{2}$, vẫn là $O(n^2)$.
+- Mỗi vòng chia đôi phạm vi: $O(\log n)$.
+
+Ký hiệu $O$ lớn bỏ qua hằng số và các số hạng bậc thấp. Viết $O(n^2)$ nghĩa là "khi $n$ đủ lớn, chi phí tỉ lệ với $n^2$ nhân một hằng số nào đó".
+
+<Note>
+Bỏ hằng số nghe có vẻ cẩu thả, nhưng nó là lựa chọn có chủ ý. Hằng số phụ thuộc vào máy tính, ngôn ngữ và cả trình biên dịch, những thứ thay đổi từng năm. Bậc tăng thì thuộc về bản thân thuật toán và không đổi. Khi so hai thuật toán khác bậc, hằng số không cứu được cái chậm hơn.
+</Note>
+
+Điều này **không** có nghĩa hằng số vô nghĩa trong thực tế. Với $n$ nhỏ, một thuật toán $O(n^2)$ hằng số nhỏ có thể nhanh hơn một thuật toán $O(n \log n)$ hằng số lớn. Các thư viện sắp xếp thật sự đều chuyển sang sắp xếp chèn khi mảng con còn dưới khoảng 16 phần tử, chính vì lý do đó.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Nhưng bạn có thể tự đo bậc tăng bằng mô phỏng [tìm kiếm nhị phân](/vi/visualizations/binary-search/): đếm số bước với dãy 13 phần tử, rồi tưởng tượng dãy 26 phần tử cần thêm bao nhiêu bước. Đáp án là đúng một bước, và đó chính là $\log_2$ đang làm việc.
+
+## 5. Pseudocode và Python
+
+```python
+# O(n) — mỗi phần tử xét đúng một lần
+def tong(a):
+    s = 0
+    for x in a:
+        s += x
+    return s
+
+# O(n²) — với mỗi phần tử lại duyệt cả mảng
+def co_cap_bang_tong(a, muc_tieu):
+    for i in range(len(a)):
+        for j in range(i + 1, len(a)):
+            if a[i] + a[j] == muc_tieu:
+                return True
+    return False
+
+# O(n) cho cùng bài toán — đổi cách nhìn, không đổi máy
+def co_cap_bang_tong_nhanh(a, muc_tieu):
+    da_gap = set()
+    for x in a:
+        if muc_tieu - x in da_gap:
+            return True
+        da_gap.add(x)
+    return False
+```
+
+Hai hàm cuối giải đúng một bài toán. Hàm sau nhanh hơn không nhờ mẹo lập trình nào, mà nhờ một câu hỏi khác: thay vì hỏi "có phần tử nào cộng với $x$ ra mục tiêu không", nó hỏi "$muc\_tieu - x$ đã từng xuất hiện chưa". Đổi câu hỏi làm đổi độ phức tạp.
+
+## 6. Điều đáng nhớ
+
+Khi nhìn một thuật toán, câu hỏi đầu tiên không phải "nó có chạy được không" mà là "nếu dữ liệu tăng gấp mười thì nó chậm đi bao nhiêu lần". Câu hỏi đó phân biệt một lời giải dùng được với một lời giải chỉ đúng trên giấy.

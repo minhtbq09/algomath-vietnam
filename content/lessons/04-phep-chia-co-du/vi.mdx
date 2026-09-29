@@ -1,0 +1,68 @@
+---
+title: Phép chia có dư và đồng dư
+---
+
+## 1. Bài toán mở đầu
+
+> Hôm nay là thứ Tư. Hỏi 1000 ngày nữa là thứ mấy?
+
+Không ai đi đếm 1000 ngày. Bạn lấy $1000 \div 7 = 142$ dư $6$, rồi đếm tiếp 6 ngày từ thứ Tư ra thứ Ba.
+
+Điều bạn vừa làm: **vứt bỏ toàn bộ phần chia hết cho 7 vì nó không ảnh hưởng tới đáp án**. Chỉ phần dư mang thông tin.
+
+## 2. Ý tưởng Toán
+
+Định lý chia có dư nói rằng với mọi số nguyên $a$ và số nguyên dương $b$, tồn tại **duy nhất** cặp $(q, r)$ sao cho
+
+$$a = bq + r, \qquad 0 \le r < b$$
+
+Chữ "duy nhất" rất quan trọng. Nó cho phép viết $a \bmod b$ như một hàm số: mỗi đầu vào cho đúng một đầu ra.
+
+Hai số cùng số dư khi chia cho $m$ thì gọi là **đồng dư modulo $m$**, viết $a \equiv b \pmod m$. Quan hệ này chia tập số nguyên thành $m$ lớp, và điều làm nó hữu ích là ba tính chất:
+
+$$a \equiv b, \; c \equiv d \implies a + c \equiv b + d, \quad a - c \equiv b - d, \quad ac \equiv bd \pmod m$$
+
+Nói cách khác, cộng, trừ và nhân đều đi xuyên qua phép lấy dư. Bạn có thể lấy dư trước rồi tính, hay tính rồi lấy dư, kết quả như nhau.
+
+<Note>
+Chú ý phép chia **không** có trong danh sách. $6 \equiv 2 \pmod 4$, nhưng chia hai vế cho 2 được $3 \equiv 1 \pmod 4$, sai. Chia trong modulo là chuyện khác hẳn và cần điều kiện nguyên tố cùng nhau. Bài 6 sẽ chạm tới nó.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Tính chất "lấy dư trước hay sau đều được" chính là thứ cứu máy tính khỏi tràn số.
+
+Thử tính chữ số tận cùng của $7^{100}$. Nếu tính $7^{100}$ trước rồi lấy dư 10, bạn cần một số 85 chữ số. Nhưng chữ số tận cùng chính là số dư khi chia 10, nên có thể lấy dư sau mỗi phép nhân:
+
+$$7^1 \equiv 7, \quad 7^2 \equiv 9, \quad 7^3 \equiv 3, \quad 7^4 \equiv 1, \quad 7^5 \equiv 7, \dots \pmod{10}$$
+
+Chu kỳ 4. Vì $100 = 4 \times 25$, ta có $7^{100} \equiv 1 \pmod{10}$. Chữ số tận cùng là 1, tính được trong đầu.
+
+Một cái bẫy cần biết: trong nhiều ngôn ngữ lập trình, phép `%` với số âm không trả về số dư theo nghĩa toán học. Trong C++ và Java, `-7 % 3` bằng `-1` chứ không phải `2`. Python trả về `2`, đúng nghĩa toán học. Khi cần số dư không âm ở C++, viết `((a % m) + m) % m`.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Mở [thuật toán Euclid](/vi/visualizations/euclid/) và chú ý cột phần dư: mỗi dòng của nó chính là một lần áp dụng định lý chia có dư ở mục 2.
+
+## 5. Pseudocode và Python
+
+```python
+# Chu kỳ chữ số tận cùng: lấy dư sau mỗi bước để số không phình to
+def chu_ky_chu_so_cuoi(a):
+    da_gap = []
+    x = a % 10
+    while x not in da_gap:
+        da_gap.append(x)
+        x = (x * a) % 10
+    return da_gap
+
+# Kiểm tra chia hết cho 3 bằng tổng chữ số
+def chia_het_cho_3(n):
+    return sum(int(c) for c in str(n)) % 3 == 0
+```
+
+Hàm thứ hai dựa trên một mệnh đề bạn đã dùng từ lớp 6 mà có thể chưa từng chứng minh: vì $10 \equiv 1 \pmod 3$, mọi luỹ thừa của 10 cũng đồng dư 1, nên một số đồng dư với tổng các chữ số của nó modulo 3. Quy tắc "tổng chữ số chia hết cho 3" chỉ là hệ quả.
+
+## 6. Điều đáng nhớ
+
+Modulo không phải một phép tính phụ. Nó là công cụ **thu nhỏ không gian bài toán**: từ vô hạn số nguyên xuống đúng $m$ lớp. Khi một bài toán có tính lặp lại theo chu kỳ, gần như chắc chắn có một modulo đang ẩn ở đâu đó.

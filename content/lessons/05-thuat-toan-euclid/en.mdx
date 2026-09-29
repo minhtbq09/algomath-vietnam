@@ -1,0 +1,86 @@
+---
+title: The Euclidean algorithm
+---
+
+## 1. Opening problem
+
+> A rectangular plot 252 metres by 105 metres must be tiled with identical square tiles, none of them cut. What is the largest tile that works?
+
+The tile's side must divide both 252 and 105, and we want it as large as possible. That is $\gcd(252, 105)$.
+
+The method you were taught: factor into primes. $252 = 2^2 \cdot 3^2 \cdot 7$ and $105 = 3 \cdot 5 \cdot 7$, so taking common factors with the smallest exponents gives $3 \cdot 7 = 21$.
+
+That works, but it has a fatal weakness you will see at the end of this lesson.
+
+## 2. The mathematical idea
+
+Back to the plot. Cut a 105 by 105 square off one end. What remains is a 105 by 42 rectangle. Cut two 42 by 42 squares and 42 by 21 remains. Two more squares and it is gone.
+
+What just happened: **a tile that fills the original plot also fills the leftover, and conversely.** No information is lost when we discard the square part.
+
+In arithmetic, with $a = bq + r$:
+
+$$\gcd(a, b) = \gcd(b, r)$$
+
+The proof is two lines, one per direction of inclusion:
+
+- If $d \mid a$ and $d \mid b$ then $d \mid a - bq = r$. So $d$ is a common divisor of $b$ and $r$.
+- If $d \mid b$ and $d \mid r$ then $d \mid bq + r = a$. So $d$ is a common divisor of $a$ and $b$.
+
+The two sets of common divisors coincide exactly, so their largest elements agree.
+
+<Note>
+Notice what was proved. Not that the gcd happens to survive, but that **the entire set of common divisors is unchanged**. That is a stronger statement, and it is why this algorithm is correct rather than merely functional.
+</Note>
+
+## 3. Turning it into an algorithm
+
+The statement above turns the problem $(a, b)$ into the strictly smaller problem $(b, r)$, since $r < b$. Repeat and the numbers shrink. It must stop, because a strictly decreasing sequence of non-negative integers cannot be infinite.
+
+Stop when? When $r = 0$, that is when $b \mid a$. At that point $\gcd(a, b) = b$.
+
+Three questions to answer for any algorithm, all answered here:
+
+| Question | The answer for Euclid |
+| --- | --- |
+| What must be stored? | Exactly two numbers, $a$ and $b$ |
+| What does each step do? | Replace $(a, b)$ by $(b, a \bmod b)$ |
+| When does it stop? | When $b = 0$; return $a$ |
+
+## 4. Simulation
+
+Change the two numbers in the inputs and press Start. Watch the remainder column: it drives the whole process.
+
+<Viz name="euclid" />
+
+Try 89 and 55. The algorithm runs unusually long and every quotient is 1. That is no coincidence, and the last exercise asks you why.
+
+## 5. Pseudocode and Python
+
+```python
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+```
+
+Three lines. The entire lesson lives in `a, b = b, a % b`, and that line is the statement $\gcd(a, b) = \gcd(b, r)$ written in Python syntax.
+
+The recursive version looks even more like the mathematics:
+
+```python
+def gcd(a, b):
+    return a if b == 0 else gcd(b, a % b)
+```
+
+## 6. Why this beats prime factorisation
+
+For 252 and 105, factoring is quick and easy. Now try these:
+
+$$a = 4{,}294{,}967{,}297 \qquad b = 3{,}215{,}031{,}751$$
+
+Factoring a 10-digit number is already heavy work. For a 200-digit number no computer on Earth can do it within your lifetime, and the entire RSA cryptosystem rests on that helplessness.
+
+The Euclidean algorithm does not care. It only divides and takes remainders. On two 200-digit numbers it finishes in a few hundred divisions.
+
+That is a bigger lesson than the gcd itself: **two methods producing the same answer can differ in cost by a factor of billions.** Mathematics asks whether an answer exists; algorithms ask whether you will live long enough to get it.

@@ -1,0 +1,87 @@
+---
+title: From relations to graphs
+---
+
+## 1. Opening problem
+
+> In a class of 30 students, each knows at least 15 of the others. Acquaintance is mutual. Prove the class can be seated in a circle so that every two neighbours know each other.
+
+This is a familiar olympiad problem. What matters is not the solution but the fact that you almost certainly **drew a picture** while reading it: dots for people, lines for acquaintance.
+
+That picture has a name. It is a graph.
+
+## 2. The mathematical idea
+
+A **graph** consists of two things: a set of **vertices** and a set of **edges** joining them. That is all.
+
+The poverty of that definition is its strength. Since a graph never specifies what a vertex is, any problem about relations between objects can be modelled:
+
+| Problem | Vertices | Edges |
+| --- | --- | --- |
+| Acquaintance in a class | students | two people who know each other |
+| A road map | junctions | road segments |
+| Exam timetabling | courses | two courses sharing a student |
+| A maze | open cells | two adjacent cells |
+| Knight moves | board squares | one legal knight move |
+| A dictionary | words | two words differing by one letter |
+
+A few terms worth knowing:
+
+- The **degree** of a vertex is the number of edges at it. In the opening problem every degree is at least 15.
+- A **path** is a sequence of vertices joined consecutively by edges.
+- A **cycle** is a path returning to its start.
+- A graph is **connected** if any two vertices are joined by a path.
+
+One simple but heavily used statement, the handshake lemma:
+
+$$\sum_{v} \deg(v) = 2|E|$$
+
+The degrees sum to twice the edge count, because each edge is counted at both ends. A consequence: the number of odd-degree vertices is always even.
+
+<Note>
+The opening problem has a name: it is Dirac's theorem, that a graph on $n$ vertices with every degree at least $n/2$ has a Hamiltonian cycle. You need not remember the name, only notice that "seat them in a circle" and "there exists a cycle through every vertex exactly once" are the same question in two languages.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Modelling is the hardest step, and it happens **before** any code exists. Three questions to answer:
+
+1. **What is a vertex?** Usually an object, but sometimes a *state*. In lesson 10 you will meet a maze whose vertices are pairs of (position, wall-break used or not).
+2. **When do two vertices share an edge?** It must be an explicit, checkable rule.
+3. **Are edges directed?** Acquaintance is mutual so it is undirected. "Page A links to page B" is one-way so it is directed.
+
+Answer those three and your problem becomes a standard graph problem, with the whole existing toolbox available to you.
+
+## 4. Simulation
+
+Open [the BFS simulation](/en/visualizations/bfs/) and look at the maze differently: each open cell is a vertex, each adjacent pair is an edge. The square grid is only a convenient drawing; the algorithm underneath knows nothing about squares.
+
+## 5. Pseudocode and Python
+
+Turning the acquaintance problem into a graph:
+
+```python
+# Adjacency list: for each person, the list of people they know
+knows = {
+    'An':   ['Binh', 'Chi'],
+    'Binh': ['An', 'Chi', 'Dung'],
+    'Chi':  ['An', 'Binh'],
+    'Dung': ['Binh'],
+}
+
+def degree(g, v):
+    return len(g[v])
+
+def handshake_check(g):
+    total_degree = sum(len(nbrs) for nbrs in g.values())
+    edges = total_degree // 2
+    return total_degree, edges
+
+print(handshake_check(knows))   # (8, 4)
+```
+
+## 6. What to take away
+
+Graphs are not a new topic you must learn on top of everything else. They are **the official name for the doodle you already draw** when solving a problem about relations.
+
+The value of naming it: once your problem is a graph, you no longer have to invent an algorithm. People invented them decades ago, and lessons 9 through 12 introduce them.

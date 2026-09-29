@@ -1,0 +1,76 @@
+---
+title: Primes and the sieve of Eratosthenes
+---
+
+## 1. Opening problem
+
+> List every prime up to 1000.
+
+The obvious method: for each $n$, try dividing by every number from 2 to $n-1$. If none divides, $n$ is prime.
+
+It works but wastes effort in two distinct ways. Sections 2 and 3 remove them one at a time.
+
+## 2. The mathematical idea
+
+**Waste one: testing all the way to $n-1$.**
+
+Suppose $n$ is composite, so $n = a \cdot b$ with $1 < a \le b < n$. If both $a$ and $b$ exceeded $\sqrt{n}$ then $a \cdot b > n$, a contradiction. So at least one factor is at most $\sqrt{n}$.
+
+Conclusion: **testing up to $\sqrt{n}$ suffices**. For $n = 1000$ that is 31 tests instead of 999.
+
+**Waste two: testing each number independently.**
+
+This one is subtler. Testing 91 reveals $91 = 7 \times 13$. Testing 98 reveals it is divisible by 7 again. You keep rediscovering the same fact about 7.
+
+Eratosthenes inverts the question. Instead of asking "does this number have a factor", ask "**what are this prime's multiples**", and strike them all in one sweep.
+
+## 3. Turning it into an algorithm
+
+Write every number from 2 to $n$. Take the smallest unstruck number, which is prime, and strike all its multiples. Repeat.
+
+Two details decide the efficiency, and both come straight from section 2:
+
+**Detail 1: striking only needs $p \le \sqrt{n}$.** Since every composite up to $n$ has a prime factor at most $\sqrt{n}$, once striking passes $\sqrt{n}$ every composite is already struck. Whatever remains is certainly prime.
+
+**Detail 2: the pass for $p$ starts at $p^2$, not $2p$.** Every multiple $kp$ with $k < p$ has a prime factor smaller than $p$, so it was struck in an earlier pass. Starting at $p^2$ saves a great deal of redundant work.
+
+The final complexity is $O(n \log \log n)$, nearly linear.
+
+## 4. Simulation
+
+Step through and watch two things: where each prime's striking pass begins, and at which prime the striking stops.
+
+<Viz name="sieve" />
+
+With $n = 60$ the striking stops after 7, since $\sqrt{60} \approx 7.75$. Every unstruck number from 11 upward is automatically prime.
+
+## 5. Pseudocode and Python
+
+```python
+def sieve(n):
+    is_prime = [True] * (n + 1)
+    is_prime[0] = is_prime[1] = False
+
+    p = 2
+    while p * p <= n:                        # only up to the square root
+        if is_prime[p]:
+            for k in range(p * p, n + 1, p):  # start at p²
+                is_prime[k] = False
+        p += 1
+
+    return [i for i in range(2, n + 1) if is_prime[i]]
+```
+
+Compare the actual costs to see the gap. For $n = 10^6$:
+
+| Method | Rough operation count |
+| --- | --- |
+| Trial division to $n-1$ | about $5 \times 10^{11}$ |
+| Trial division to $\sqrt{n}$ | about $5 \times 10^8$ |
+| Sieve of Eratosthenes | about $3 \times 10^6$ |
+
+## 6. What to take away
+
+The biggest leap in this lesson was not a technical detail but **inverting the question**. "Does this number have a factor" is the natural question and it leads to a slow algorithm. "What are this prime's multiples" is the stranger question and it leads to one a hundred times faster.
+
+When an algorithm is slow, sometimes what needs fixing is not the code but the question.

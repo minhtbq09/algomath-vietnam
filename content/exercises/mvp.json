@@ -1,0 +1,324 @@
+[
+  {
+    "id": "L01-E1",
+    "lesson": "01-thuat-toan-la-gi",
+    "topic": "Nền tảng",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Viết lại các bước tìm số lớn nhất trong một dãy 5 số sao cho một người chưa từng nhìn thấy dãy đó vẫn làm đúng, chỉ bằng cách đọc các bước. Không được dùng câu \"nhìn vào và chọn số lớn nhất\".",
+      "en": "Write the steps for finding the largest of five numbers so that someone who has never seen the list can follow them exactly. You may not write \"look at the list and pick the biggest\"."
+    },
+    "hint": {
+      "vi": "Một người chỉ nhìn được một số tại một thời điểm. Bạn cần một chỗ để ghi nhớ số lớn nhất đã gặp cho tới lúc này.",
+      "en": "Imagine the reader can only look at one number at a time. You need somewhere to record the largest seen so far."
+    },
+    "solution": {
+      "vi": "Ghi số đầu tiên vào ô nhớ. Lần lượt với từng số còn lại: nếu số đang xét lớn hơn ô nhớ thì ghi đè số đó vào ô nhớ. Hết dãy, ô nhớ chính là số lớn nhất. Điểm mấu chốt là ô nhớ, thứ mà lời giải \"nhìn và chọn\" giấu đi.",
+      "en": "Write the first number in a memory slot. For each remaining number, if it is larger than the slot, overwrite the slot. At the end the slot holds the maximum. The key is the memory slot, which the informal answer hides."
+    }
+  },
+  {
+    "id": "L01-E2",
+    "lesson": "01-thuat-toan-la-gi",
+    "topic": "Nền tảng",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Ba mô tả sau, cái nào là thuật toán, cái nào không? (a) Chia đôi khoảng liên tục cho tới khi tìm được nghiệm. (b) Với n từ 2 tới 100, nếu n chia hết cho một số nào đó nhỏ hơn n thì bỏ n. (c) Chọn một số may mắn rồi kiểm tra.",
+      "en": "Which of these are algorithms and which are not? (a) Keep halving the interval until you find the root. (b) For n from 2 to 100, drop n if it is divisible by some number below n. (c) Pick a lucky number and test it."
+    },
+    "hint": {
+      "vi": "Hỏi hai câu với từng mô tả: các bước có xác định duy nhất không, và nó có chắc chắn dừng không?",
+      "en": "Ask two questions of each: is every step uniquely determined, and is it guaranteed to stop?"
+    },
+    "solution": {
+      "vi": "(a) chưa phải, vì không nói rõ khi nào dừng, chia đôi mãi vẫn có thể không bao giờ trúng nghiệm đúng; cần thêm điều kiện dừng kiểu độ dài khoảng nhỏ hơn epsilon. (b) là thuật toán, mọi bước xác định và chắc chắn dừng sau hữu hạn phép thử. (c) không phải, bước \"chọn số may mắn\" không xác định.",
+      "en": "(a) Not yet: it never says when to stop, and halving forever may never land exactly on the root. Add a stopping rule such as interval length below epsilon. (b) Yes: every step is determined and it terminates after finitely many tests. (c) No: \"pick a lucky number\" is not a determined step."
+    }
+  },
+  {
+    "id": "L01-E3",
+    "lesson": "01-thuat-toan-la-gi",
+    "topic": "Nền tảng",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Bạn có một chồng 30 bài kiểm tra đã chấm nhưng xếp lộn xộn. Hãy mô tả một thuật toán xếp chúng theo điểm tăng dần, viết rõ tới mức một em lớp 6 làm theo được. Sau đó đếm số lần bạn phải so sánh hai bài với nhau.",
+      "en": "You have 30 marked papers in random order. Describe an algorithm to sort them by score, precise enough for a 12-year-old to follow. Then count how many times you compare two papers."
+    },
+    "hint": {
+      "vi": "Cách dễ mô tả nhất: rút từng bài ra và chèn vào đúng chỗ trong chồng đã xếp. Đếm số so sánh trong trường hợp xấu nhất.",
+      "en": "The easiest to describe: take one paper at a time and insert it into the right place in the sorted pile. Count comparisons in the worst case."
+    },
+    "solution": {
+      "vi": "Sắp xếp chèn: giữ một chồng đã xếp, ban đầu rỗng. Với mỗi bài mới, so sánh lần lượt với các bài trong chồng đã xếp từ trên xuống cho tới khi tìm được vị trí, rồi chèn vào. Trường hợp xấu nhất bài thứ k phải so sánh k-1 lần, tổng cộng 1+2+...+29 = 435 lần so sánh.",
+      "en": "Insertion sort: keep a sorted pile, initially empty. For each new paper, compare it down the sorted pile until you find its place, then insert. In the worst case the k-th paper needs k-1 comparisons, giving 1+2+...+29 = 435 comparisons in total."
+    }
+  },
+  {
+    "id": "L01-E4",
+    "lesson": "01-thuat-toan-la-gi",
+    "topic": "Nền tảng",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Cho một thuật toán: \"bắt đầu từ n, nếu n chẵn thì thay n bằng n/2, nếu n lẻ thì thay n bằng 3n+1, lặp lại cho tới khi n bằng 1\". Với n = 7 hãy chạy tay và đếm số bước. Thuật toán này có chắc chắn dừng với mọi n hay không?",
+      "en": "Consider: \"start with n; if n is even replace it by n/2, if n is odd replace it by 3n+1; repeat until n equals 1\". Run it by hand for n = 7 and count the steps. Is it guaranteed to stop for every n?"
+    },
+    "hint": {
+      "vi": "Chạy tay thì dễ. Câu hỏi thứ hai khó hơn nhiều so với vẻ ngoài của nó, hãy thử tìm một đại lượng luôn giảm.",
+      "en": "Running it is easy. The second question is far harder than it looks; try to find a quantity that always decreases."
+    },
+    "solution": {
+      "vi": "Với n = 7 dãy là 7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1, tức 16 bước. Câu hỏi thứ hai là giả thuyết Collatz, chưa ai chứng minh được và cũng chưa ai tìm được phản ví dụ. Bài này cho thấy \"chắc chắn dừng\" là một yêu cầu thật sự chứ không hiển nhiên, và có những quy trình rất ngắn mà loài người vẫn chưa biết nó có phải thuật toán hay không.",
+      "en": "For n = 7 the sequence is 7, 22, 11, 34, 17, 52, 26, 13, 40, 20, 10, 5, 16, 8, 4, 2, 1, so 16 steps. The second question is the Collatz conjecture: nobody has proved it and nobody has found a counterexample. This shows that guaranteed termination is a real requirement, and that some very short procedures are still not known to be algorithms."
+    }
+  },
+
+  {
+    "id": "L03-E1",
+    "lesson": "03-do-phuc-tap",
+    "topic": "Độ phức tạp",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Một vòng lặp chạy i từ 1 đến n, bên trong có một vòng lặp chạy j từ 1 đến n. Bên trong cùng có đúng một phép cộng. Có bao nhiêu phép cộng được thực hiện?",
+      "en": "A loop runs i from 1 to n, and inside it another loop runs j from 1 to n. The innermost body does exactly one addition. How many additions happen?"
+    },
+    "hint": { "vi": "Mỗi giá trị của i kéo theo bao nhiêu giá trị của j?", "en": "For each value of i, how many values does j take?" },
+    "solution": {
+      "vi": "n² phép cộng. Với mỗi trong n giá trị của i, vòng trong chạy đủ n lần.",
+      "en": "n² additions. For each of the n values of i, the inner loop runs n times."
+    }
+  },
+  {
+    "id": "L03-E2",
+    "lesson": "03-do-phuc-tap",
+    "topic": "Độ phức tạp",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Vòng ngoài chạy i từ 1 đến n, vòng trong chạy j từ i đến n. Đếm số lần thân vòng trong được thực hiện, rồi so sánh với n².",
+      "en": "The outer loop runs i from 1 to n and the inner loop runs j from i to n. Count how many times the inner body runs, then compare that with n²."
+    },
+    "hint": {
+      "vi": "Với i = 1 vòng trong chạy n lần, i = 2 chạy n-1 lần. Đây là một tổng bạn đã biết.",
+      "en": "For i = 1 the inner loop runs n times, for i = 2 it runs n-1 times. This is a sum you already know."
+    },
+    "solution": {
+      "vi": "Tổng là n + (n-1) + ... + 1 = n(n+1)/2, xấp xỉ n²/2. Chỉ nhanh hơn n² đúng hai lần, nên khi n lớn cả hai đều thuộc cùng một bậc tăng và ta viết O(n²). Hằng số 1/2 không đổi bậc.",
+      "en": "The total is n + (n-1) + ... + 1 = n(n+1)/2, roughly n²/2. That is only twice as fast as n², so for large n both sit in the same growth class and we write O(n²). The constant 1/2 does not change the order."
+    }
+  },
+  {
+    "id": "L03-E3",
+    "lesson": "03-do-phuc-tap",
+    "topic": "Độ phức tạp",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Một thuật toán chạy 1 giây với n = 1000 và có độ phức tạp O(n²). Ước lượng thời gian chạy với n = 10000 và n = 100000.",
+      "en": "An algorithm takes 1 second at n = 1000 and runs in O(n²). Estimate the running time at n = 10000 and at n = 100000."
+    },
+    "hint": { "vi": "n tăng 10 lần thì n² tăng bao nhiêu lần?", "en": "If n grows by a factor of 10, what happens to n²?" },
+    "solution": {
+      "vi": "n tăng 10 lần thì n² tăng 100 lần. Với n = 10000 mất khoảng 100 giây, với n = 100000 mất khoảng 10000 giây, tức gần 3 tiếng. Đây là lý do bậc tăng quan trọng hơn tốc độ máy tính rất nhiều.",
+      "en": "Multiplying n by 10 multiplies n² by 100. At n = 10000 it takes about 100 seconds; at n = 100000 about 10000 seconds, nearly 3 hours. This is why the growth order matters far more than the speed of the machine."
+    }
+  },
+  {
+    "id": "L03-E4",
+    "lesson": "03-do-phuc-tap",
+    "topic": "Độ phức tạp",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Chứng minh rằng số lần chia đôi một đoạn có n phần tử cho tới khi còn 1 phần tử là khoảng log₂n, và giải thích vì sao con số này tăng rất chậm khi n tăng.",
+      "en": "Show that halving a range of n elements until one element remains takes about log₂n steps, and explain why that count grows so slowly as n grows."
+    },
+    "hint": {
+      "vi": "Sau k lần chia đôi còn khoảng n/2^k phần tử. Đặt biểu thức đó bằng 1.",
+      "en": "After k halvings about n/2^k elements remain. Set that equal to 1."
+    },
+    "solution": {
+      "vi": "Từ n/2^k = 1 suy ra 2^k = n, tức k = log₂n. Con số này tăng chậm vì muốn k tăng thêm 1 thì n phải tăng gấp đôi. Với n = 1000 thì k khoảng 10, với n = 1 tỉ thì k chỉ khoảng 30. Một triệu lần dữ liệu chỉ đổi lấy 20 bước thêm.",
+      "en": "From n/2^k = 1 we get 2^k = n, so k = log₂n. It grows slowly because raising k by 1 requires doubling n. At n = 1000, k is about 10; at n = 1 billion, k is only about 30. A million times more data costs just 20 extra steps."
+    }
+  },
+
+  {
+    "id": "L05-E1",
+    "lesson": "05-thuat-toan-euclid",
+    "topic": "Số học",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Chạy tay thuật toán Euclid cho cặp 1071 và 462. Viết ra từng dòng chia có dư.",
+      "en": "Run the Euclidean algorithm by hand on 1071 and 462. Write out every division line."
+    },
+    "hint": { "vi": "Mỗi dòng có dạng a = b × q + r, dòng sau lấy b và r của dòng trước.", "en": "Each line reads a = b × q + r; the next line takes the previous b and r." },
+    "solution": {
+      "vi": "1071 = 462 × 2 + 147; 462 = 147 × 3 + 21; 147 = 21 × 7 + 0. ƯCLN bằng 21.",
+      "en": "1071 = 462 × 2 + 147; 462 = 147 × 3 + 21; 147 = 21 × 7 + 0. The gcd is 21."
+    }
+  },
+  {
+    "id": "L05-E2",
+    "lesson": "05-thuat-toan-euclid",
+    "topic": "Số học",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Chứng minh mệnh đề mà cả thuật toán dựa vào: nếu a = bq + r thì tập ước chung của (a, b) trùng với tập ước chung của (b, r).",
+      "en": "Prove the statement the whole algorithm rests on: if a = bq + r then the common divisors of (a, b) are exactly the common divisors of (b, r)."
+    },
+    "hint": { "vi": "Chứng minh hai chiều. Chiều thuận dùng r = a - bq, chiều ngược dùng a = bq + r.", "en": "Prove both directions. One way uses r = a - bq, the other uses a = bq + r." },
+    "solution": {
+      "vi": "Nếu d chia hết a và b thì d chia hết a - bq = r, nên d là ước chung của b và r. Ngược lại nếu d chia hết b và r thì d chia hết bq + r = a, nên d là ước chung của a và b. Hai tập ước chung trùng nhau, do đó phần tử lớn nhất của chúng cũng bằng nhau, tức ƯCLN(a,b) = ƯCLN(b,r).",
+      "en": "If d divides a and b then d divides a - bq = r, so d is a common divisor of b and r. Conversely if d divides b and r then d divides bq + r = a, so d is a common divisor of a and b. The two sets coincide, hence their largest elements agree: gcd(a,b) = gcd(b,r)."
+    }
+  },
+  {
+    "id": "L05-E3",
+    "lesson": "05-thuat-toan-euclid",
+    "topic": "Số học",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Dùng mô phỏng, tìm một cặp số nhỏ hơn 100 mà thuật toán Euclid cần nhiều bước nhất. Bạn có nhận ra dãy số nào quen thuộc không?",
+      "en": "Using the simulation, find a pair below 100 that makes the Euclidean algorithm take the most steps. Do you recognise the numbers?"
+    },
+    "hint": { "vi": "Thử các cặp số liên tiếp trong dãy 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89.", "en": "Try consecutive terms of 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89." },
+    "solution": {
+      "vi": "Cặp 89 và 55, hai số Fibonacci liên tiếp, cần nhiều bước nhất. Lý do là mỗi phép chia chỉ cho thương bằng 1, nên số giảm chậm nhất có thể. Đây chính là trường hợp xấu nhất của thuật toán Euclid.",
+      "en": "The pair 89 and 55, consecutive Fibonacci numbers, needs the most steps. Every division has quotient 1, so the numbers shrink as slowly as possible. This is exactly the worst case of the Euclidean algorithm."
+    }
+  },
+  {
+    "id": "L05-E4",
+    "lesson": "05-thuat-toan-euclid",
+    "topic": "Số học",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Một cửa hàng chỉ có cân 21 gam và 15 gam, cân được cả hai phía đĩa. Hỏi có thể cân chính xác 3 gam không, và tổng quát là những khối lượng nào cân được?",
+      "en": "A shop has only 21 g and 15 g weights, usable on either pan. Can it weigh exactly 3 g, and in general which masses can it weigh?"
+    },
+    "hint": { "vi": "Đặt cân hai phía nghĩa là bạn được dùng hệ số nguyên âm. Tính ƯCLN(21, 15).", "en": "Using both pans means integer coefficients may be negative. Compute gcd(21, 15)." },
+    "solution": {
+      "vi": "ƯCLN(21, 15) = 3, và 3 = 21 × 3 - 15 × 4, nghĩa là đặt ba quả 21 gam một bên, bốn quả 15 gam bên kia thì chênh đúng 3 gam. Tổng quát, các khối lượng cân được đúng là các bội của ƯCLN. Đây là định lý Bézout, và thuật toán Euclid mở rộng chính là cách tìm ra bộ hệ số đó.",
+      "en": "gcd(21, 15) = 3, and 3 = 21 × 3 - 15 × 4: put three 21 g weights on one pan and four 15 g weights on the other and the difference is exactly 3 g. In general the achievable masses are precisely the multiples of the gcd. This is Bézout's identity, and the extended Euclidean algorithm is how you find the coefficients."
+    }
+  },
+
+  {
+    "id": "L10-E1",
+    "lesson": "10-bfs-va-khoang-cach",
+    "topic": "Đồ thị",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Trong mô phỏng BFS, hãy dừng lại ở bước đầu tiên mà có một ô mang số 3. Liệt kê tất cả các ô mang số 2 tại thời điểm đó và giải thích vì sao không ô nào mang số 4.",
+      "en": "In the BFS simulation, pause at the first step where some cell shows 3. List every cell showing 2 at that moment and explain why no cell shows 4 yet."
+    },
+    "hint": { "vi": "Hàng đợi lấy ra theo đúng thứ tự vào. Ô mang số 4 chỉ sinh ra từ ô mang số 3.", "en": "A queue serves in arrival order. A cell labelled 4 can only come from a cell labelled 3." },
+    "solution": {
+      "vi": "Không ô nào mang số 4 vì ô số 4 chỉ được gán khi một ô số 3 được lấy ra khỏi hàng đợi và xét các ô kề. Tại thời điểm ô số 3 vừa xuất hiện, nó mới chỉ được đưa vào cuối hàng đợi, phía trước còn toàn bộ các ô số 2 chưa xử lý.",
+      "en": "No cell shows 4 because a 4 is only assigned when a 3-cell is taken off the queue and its neighbours are examined. At the moment a 3 first appears it has only just joined the back of the queue, and every unprocessed 2-cell is still ahead of it."
+    }
+  },
+  {
+    "id": "L10-E2",
+    "lesson": "10-bfs-va-khoang-cach",
+    "topic": "Đồ thị",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Nếu thay hàng đợi bằng ngăn xếp, tức lấy ra phần tử vào sau cùng thay vì vào đầu tiên, thứ tự thăm sẽ đổi thế nào? Các số ghi trên ô còn là khoảng cách ngắn nhất nữa không?",
+      "en": "If you swap the queue for a stack, taking the most recently added item instead of the oldest, how does the visiting order change? Do the numbers on the cells still record shortest distances?"
+    },
+    "hint": { "vi": "Thử hình dung trên một lưới không tường. Bạn sẽ đi sâu theo một hướng trước.", "en": "Picture it on an open grid. You will run deep in one direction first." },
+    "solution": {
+      "vi": "Đổi thành ngăn xếp thì thuật toán trở thành DFS, đi sâu theo một nhánh tới hết rồi mới quay lại. Các số ghi trên ô không còn là khoảng cách ngắn nhất, vì một ô có thể bị gán nhãn khi đến bằng một đường vòng dài trước khi đường ngắn kịp tới. BFS đúng chính là nhờ tính chất vào trước ra trước của hàng đợi.",
+      "en": "With a stack the algorithm becomes DFS, running deep along one branch before backtracking. The numbers are no longer shortest distances, because a cell can be labelled by a long detour before the short route reaches it. BFS is correct precisely because a queue serves first-in first-out."
+    }
+  },
+  {
+    "id": "L10-E3",
+    "lesson": "10-bfs-va-khoang-cach",
+    "topic": "Đồ thị",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Một quân mã đứng ở ô a1 trên bàn cờ vua 8×8. Hỏi cần ít nhất bao nhiêu nước đi để tới ô h8? Hãy mô hình hóa bài toán thành đồ thị trước khi tính.",
+      "en": "A knight stands on a1 of an 8×8 chessboard. What is the minimum number of moves to reach h8? Model the problem as a graph before computing."
+    },
+    "hint": { "vi": "Đỉnh là 64 ô, cạnh nối hai ô nếu quân mã đi được từ ô này sang ô kia. Khoảng cách theo số bước chính là BFS.", "en": "Vertices are the 64 squares; an edge joins two squares if a knight can move between them. Distance in moves is exactly BFS." },
+    "solution": {
+      "vi": "Mô hình hóa: 64 đỉnh, mỗi đỉnh nối tới các ô mà quân mã tới được, tối đa 8 cạnh. Chạy BFS từ a1 cho khoảng cách tới h8 bằng 6. Điểm đáng chú ý là bài toán cờ vua này không có gì giống bài toán mê cung về hình thức, nhưng sau khi mô hình hóa thì cùng là một bài toán BFS.",
+      "en": "Model it with 64 vertices, each joined to the squares a knight can reach, at most 8 edges. BFS from a1 gives distance 6 to h8. The point worth noticing is that this chess question looks nothing like a maze, yet after modelling it is the same BFS problem."
+    }
+  },
+  {
+    "id": "L10-E4",
+    "lesson": "10-bfs-va-khoang-cach",
+    "topic": "Đồ thị",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Trong một mê cung có một số ô tường mà bạn được phép phá đúng một ô. Hãy nghĩ cách mô hình hóa để vẫn dùng BFS tìm đường ngắn nhất, không cần thuật toán mới.",
+      "en": "In a maze you are allowed to break through exactly one wall. Find a way to model this so that plain BFS still finds the shortest path, with no new algorithm."
+    },
+    "hint": { "vi": "Trạng thái của bạn không chỉ là vị trí. Nó còn gồm việc bạn đã dùng quyền phá tường hay chưa.", "en": "Your state is not only your position. It also includes whether you have used the wall-breaking right." },
+    "solution": {
+      "vi": "Nhân đôi bản đồ thành hai tầng: tầng 0 là chưa phá tường, tầng 1 là đã phá. Trong mỗi tầng đi lại bình thường qua ô trống. Từ tầng 0 có thêm cạnh đi xuyên một ô tường sang cùng vị trí ở tầng 1. Chạy BFS trên đồ thị 2 tầng này. Ý tưởng chung: khi bài toán có thêm một điều kiện, hãy đưa điều kiện đó vào trạng thái thay vì sửa thuật toán.",
+      "en": "Duplicate the map into two layers: layer 0 means the wall-break is unused, layer 1 means it is used. Inside each layer you move normally through open cells. From layer 0 there is an extra edge that passes through one wall cell into the same position on layer 1. Run BFS on this two-layer graph. The general lesson: when a problem gains a condition, put the condition into the state rather than modifying the algorithm."
+    }
+  },
+
+  {
+    "id": "L16-E1",
+    "lesson": "16-tim-kiem-nhi-phan",
+    "topic": "Tìm kiếm",
+    "difficulty": "easy",
+    "statement": {
+      "vi": "Một cuốn từ điển có 1000 trang. Dùng cách chia đôi, tối đa bao nhiêu lần lật là chắc chắn tìm được trang cần tìm?",
+      "en": "A dictionary has 1000 pages. Using halving, how many openings are needed in the worst case to find a given page?"
+    },
+    "hint": { "vi": "Tìm số k nhỏ nhất sao cho 2^k ≥ 1000.", "en": "Find the smallest k with 2^k ≥ 1000." },
+    "solution": {
+      "vi": "2^10 = 1024 ≥ 1000, nên tối đa 10 lần. So với việc lật lần lượt từng trang, 10 lần thay vì 1000 lần.",
+      "en": "2^10 = 1024 ≥ 1000, so at most 10 openings. Compare that with turning pages one at a time: 10 instead of 1000."
+    }
+  },
+  {
+    "id": "L16-E2",
+    "lesson": "16-tim-kiem-nhi-phan",
+    "topic": "Tìm kiếm",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Dùng mô phỏng, chọn tìm số 40 là số không có trong dãy. Ghi lại vùng tìm kiếm sau từng bước và giải thích thuật toán biết chắc chắn số đó không tồn tại vào lúc nào.",
+      "en": "In the simulation, search for 40, which is not in the list. Record the range after each step and explain when the algorithm becomes certain the value is absent."
+    },
+    "hint": { "vi": "Chú ý dấu hiệu lo vượt qua hi.", "en": "Watch for the moment lo passes hi." },
+    "solution": {
+      "vi": "Vùng tìm kiếm co lại cho tới khi lo lớn hơn hi, tức vùng rỗng. Lúc đó mọi phần tử đều đã bị loại bởi một phép so sánh có căn cứ: mỗi lần loại nửa dãy, ta đã chứng minh nửa đó không thể chứa 40 nhờ tính sắp xếp. Vùng rỗng nghĩa là không còn chỗ nào để 40 có thể nằm.",
+      "en": "The range shrinks until lo exceeds hi, that is until it is empty. By then every element has been ruled out by a justified comparison: each discarded half was proved unable to contain 40 because the list is sorted. An empty range means there is nowhere left for 40 to hide."
+    }
+  },
+  {
+    "id": "L16-E3",
+    "lesson": "16-tim-kiem-nhi-phan",
+    "topic": "Tìm kiếm",
+    "difficulty": "medium",
+    "statement": {
+      "vi": "Cho hàm f(x) = x³ + x - 10. Biết f(1) < 0 và f(3) > 0, hãy dùng ý tưởng chia đôi để tìm nghiệm với sai số nhỏ hơn 0,1. Thực hiện ít nhất 4 bước.",
+      "en": "Let f(x) = x³ + x - 10. Given f(1) < 0 and f(3) > 0, use halving to locate a root within 0.1. Do at least 4 steps."
+    },
+    "hint": { "vi": "Ở mỗi bước tính f tại điểm giữa, rồi giữ lại nửa khoảng mà hai đầu có dấu trái nhau.", "en": "At each step evaluate f at the midpoint, then keep the half whose endpoints have opposite signs." },
+    "solution": {
+      "vi": "f(2) = 0, nên nghiệm đúng bằng 2 và tìm thấy ngay bước đầu. Nếu đổi thành f(x) = x³ + x - 11 thì f(2) = -1 < 0, giữ khoảng [2, 3]; f(2,5) = 6,6 > 0, giữ [2; 2,5]; f(2,25) ≈ 2,64 > 0, giữ [2; 2,25]; f(2,125) ≈ 0,72 > 0, giữ [2; 2,125], độ dài 0,125 rồi 0,0625 sau bước nữa. Điểm cần thấy: tìm kiếm nhị phân không chỉ dùng cho mảng, nó dùng cho mọi thứ đơn điệu.",
+      "en": "f(2) = 0, so the root is exactly 2 and the first step finds it. Change it to f(x) = x³ + x - 11: f(2) = -1 < 0, keep [2, 3]; f(2.5) = 6.6 > 0, keep [2, 2.5]; f(2.25) ≈ 2.64 > 0, keep [2, 2.25]; f(2.125) ≈ 0.72 > 0, keep [2, 2.125], length 0.125, then 0.0625 after one more step. The lesson: binary search is not only for arrays, it works on anything monotone."
+    }
+  },
+  {
+    "id": "L16-E4",
+    "lesson": "16-tim-kiem-nhi-phan",
+    "topic": "Tìm kiếm",
+    "difficulty": "hard",
+    "statement": {
+      "vi": "Có n = 100 chiếc bánh và một cái cân thăng bằng. Đúng một chiếc nhẹ hơn các chiếc còn lại. Hỏi cần ít nhất bao nhiêu lần cân để chắc chắn tìm ra nó, và vì sao đáp án không phải log₂100?",
+      "en": "There are n = 100 cakes and a balance scale. Exactly one is lighter than the rest. What is the minimum number of weighings needed to be sure of finding it, and why is the answer not log₂100?"
+    },
+    "hint": { "vi": "Một lần cân thăng bằng cho ba kết quả chứ không phải hai: trái nhẹ, phải nhẹ, hoặc bằng nhau.", "en": "A balance gives three outcomes, not two: left lighter, right lighter, or equal." },
+    "solution": {
+      "vi": "Mỗi lần cân chia bài toán làm ba phần chứ không phải hai, nên số lần cân cần thiết là log₃100, tức 5 lần vì 3^4 = 81 < 100 ≤ 243 = 3^5. Cách làm: chia thành ba nhóm càng đều càng tốt, cân hai nhóm với nhau, nhóm chứa bánh nhẹ lộ ra ngay. Bài này cho thấy con số 2 trong tìm kiếm nhị phân không thiêng liêng, cái thiêng liêng là mỗi phép thử loại được bao nhiêu phần khả năng.",
+      "en": "Each weighing splits the problem into three parts, not two, so the answer is log₃100, that is 5 weighings since 3^4 = 81 < 100 ≤ 243 = 3^5. Method: split into three groups as equal as possible and weigh two of them; the group holding the light cake reveals itself. This shows the 2 in binary search is not sacred. What matters is how much of the possibility space each test eliminates."
+    }
+  }
+]

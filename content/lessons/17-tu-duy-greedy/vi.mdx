@@ -1,0 +1,76 @@
+---
+title: Tư duy tham lam
+---
+
+## 1. Bài toán mở đầu
+
+> Bạn có tiền mệnh giá 1000, 2000, 5000, 10000, 20000, 50000, 100000 đồng. Cần trả đúng 87000 đồng bằng ít tờ nhất. Trả thế nào?
+
+Bạn làm ngay mà không cần nghĩ: một tờ 50000, rồi 20000, rồi 10000, rồi 5000, rồi 2000. Năm tờ.
+
+Cách bạn vừa dùng có tên: mỗi bước lấy tờ lớn nhất còn dùng được. Đó là **tham lam**.
+
+Câu hỏi thực sự của bài này không phải "làm thế nào", mà là "**vì sao cách đó cho kết quả tối ưu**", và bài 18 sẽ cho thấy đôi khi nó không.
+
+## 2. Ý tưởng Toán
+
+Thuật toán tham lam đưa ra lựa chọn tốt nhất tại từng bước, không nhìn về phía trước. Nó đúng khi bài toán có hai tính chất:
+
+**Tính chất 1: lựa chọn tham lam an toàn.** Tồn tại một lời giải tối ưu chứa lựa chọn tham lam đầu tiên.
+
+**Tính chất 2: cấu trúc con tối ưu.** Sau khi thực hiện lựa chọn đó, phần còn lại là một bài toán cùng dạng, và lời giải tối ưu của nó ghép với lựa chọn ban đầu cho lời giải tối ưu toàn cục.
+
+Cách chứng minh tính chất 1 gọi là **lập luận trao đổi**: lấy một lời giải tối ưu bất kỳ, chỉ ra cách sửa nó để chứa lựa chọn tham lam mà không làm nó tệ đi.
+
+Thử với bài toán chọn hoạt động: cho $n$ hoạt động, mỗi cái có giờ bắt đầu và giờ kết thúc, chọn nhiều hoạt động nhất không chồng giờ.
+
+Chiến thuật tham lam: **chọn hoạt động kết thúc sớm nhất**.
+
+Chứng minh bằng trao đổi. Gọi $g$ là hoạt động kết thúc sớm nhất, và $S$ là một lời giải tối ưu bất kỳ. Nếu $g \in S$, xong. Nếu không, gọi $f$ là hoạt động kết thúc sớm nhất trong $S$. Vì $g$ kết thúc không muộn hơn $f$, thay $f$ bằng $g$ vẫn không chồng lấn với phần còn lại của $S$. Tập mới có cùng số phần tử, vẫn tối ưu, và chứa $g$.
+
+<Note>
+Chú ý cấu trúc của lập luận này. Ta không chứng minh lời giải tham lam là lời giải tối ưu duy nhất. Ta chứng minh nó **cũng** tối ưu, bằng cách sửa một lời giải tối ưu bất kỳ về phía nó mà không mất gì. Đây là mẫu chứng minh dùng được cho mọi bài greedy.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Greedy gần như luôn có dạng: **sắp xếp theo một tiêu chí, rồi duyệt một lượt**.
+
+Phần khó không phải code, mà là chọn đúng tiêu chí sắp xếp. Với bài chọn hoạt động, có ba tiêu chí trông đều hợp lý:
+
+| Tiêu chí | Có tối ưu không |
+| --- | --- |
+| Bắt đầu sớm nhất | Không. Một hoạt động bắt đầu sớm nhưng kéo dài cả ngày sẽ chặn hết |
+| Thời lượng ngắn nhất | Không. Một hoạt động ngắn nằm vắt giữa hai hoạt động khác sẽ loại cả hai |
+| Kết thúc sớm nhất | Có, đã chứng minh ở mục 2 |
+
+Ba dòng code gần như giống hệt nhau, một cái đúng và hai cái sai. Đó là lý do bài này dành phần lớn thời lượng cho chứng minh chứ không cho code.
+
+## 4. Mô phỏng
+
+Bài này chưa có mô phỏng riêng. Bạn có thể tự kiểm tra bằng giấy: vẽ các hoạt động thành các đoạn thẳng trên trục thời gian, rồi thử cả ba tiêu chí ở mục 3 trên cùng một bộ dữ liệu. Hai tiêu chí sai sẽ lộ ra ngay với ví dụ khoảng 4 hoạt động.
+
+## 5. Pseudocode và Python
+
+```python
+def chon_hoat_dong(hoat_dong):
+    """hoat_dong là danh sách các cặp (bat_dau, ket_thuc)."""
+    hoat_dong = sorted(hoat_dong, key=lambda x: x[1])   # kết thúc sớm nhất trước
+    ket_qua = []
+    gio_ranh = 0
+    for bat_dau, ket_thuc in hoat_dong:
+        if bat_dau >= gio_ranh:
+            ket_qua.append((bat_dau, ket_thuc))
+            gio_ranh = ket_thuc
+    return ket_qua
+```
+
+Độ phức tạp $O(n \log n)$, chi phí chủ yếu nằm ở phép sắp xếp.
+
+## 6. Điều đáng nhớ
+
+Greedy là thuật toán dễ viết nhất và khó chứng minh nhất trong toàn bộ chương trình.
+
+Một chiến thuật tham lam sai vẫn cho ra đáp án, vẫn chạy nhanh, và vẫn đúng với hầu hết dữ liệu bạn thử. Nó chỉ sai ở những trường hợp bạn không nghĩ tới. Vì vậy **quy tắc là: không dùng greedy nếu chưa chứng minh được**, hoặc ít nhất chưa thử tìm phản ví dụ một cách nghiêm túc.
+
+Bài 18 sẽ dành trọn cho việc tìm phản ví dụ đó.

@@ -1,0 +1,89 @@
+---
+title: Quay lui qua tổ hợp và mê cung
+---
+
+## 1. Bài toán mở đầu
+
+> Đặt 8 quân hậu lên bàn cờ 8×8 sao cho không quân nào ăn được quân nào. Có bao nhiêu cách?
+
+Cách ngây thơ: thử mọi cách chọn 8 ô trong 64 ô. Số cách là $\binom{64}{8} = 4\,426\,165\,368$, hơn bốn tỉ. Máy chạy được nhưng mất hàng phút, và cách này không mở rộng lên bàn cờ lớn hơn.
+
+Cách của bạn khi giải tay: đặt một quân ở cột 1, sang cột 2 thử các ô hợp lệ, gặp bế tắc thì lùi lại đổi lựa chọn ở cột trước. Cách đó chỉ xét khoảng 15000 trạng thái, nhanh hơn ba trăm nghìn lần.
+
+## 2. Ý tưởng Toán
+
+Hai quan sát biến bốn tỉ thành mười lăm nghìn.
+
+**Quan sát 1: liệt kê có cấu trúc.** Mỗi cột phải có đúng một quân hậu, vì hai quân cùng cột ăn nhau. Vậy một cách đặt là một dãy $(r_1, r_2, \dots, r_8)$ với $r_i$ là hàng của quân ở cột $i$. Số dãy là $8^8 = 16\,777\,216$, đã giảm 260 lần chỉ nhờ nhìn bài toán đúng cách.
+
+Thêm điều kiện không cùng hàng, các $r_i$ đôi một khác nhau, số cách còn $8! = 40\,320$.
+
+**Quan sát 2: cắt nhánh.** Đây mới là ý chính. Nếu hai quân ở cột 1 và cột 2 đã ăn nhau, thì **mọi** cách đặt 6 quân còn lại đều hỏng. Không cần thử một cái nào trong số đó.
+
+Số cách bị loại bởi một lần cắt ở cột 2 là $8^6 = 262\,144$. Cắt càng sớm, cây tìm kiếm càng nhỏ.
+
+<Note>
+Đây chính là lập luận bạn dùng trong các bài tổ hợp có điều kiện: thay vì đếm tất cả rồi trừ, bạn xây dựng dần và loại ngay khi vi phạm. Quay lui là thuật toán hoá của thói quen đó.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Quay lui gồm bốn phần, và đây là khuôn mẫu dùng được cho gần như mọi bài liệt kê:
+
+1. **Trạng thái.** Lời giải đang xây dở, ở đây là các cột đã đặt quân.
+2. **Lựa chọn.** Các nước đi hợp lệ tiếp theo.
+3. **Cắt nhánh.** Điều kiện phát hiện trạng thái đã hỏng, dừng ngay.
+4. **Lùi.** Sau khi thử xong một lựa chọn, gỡ nó ra để thử lựa chọn khác.
+
+Bước 4 là chỗ hay quên nhất và cũng là chỗ đặt tên cho thuật toán. Nếu không gỡ trạng thái ra, các nhánh sẽ ảnh hưởng lẫn nhau và kết quả sai một cách rất khó tìm.
+
+Điểm cần hiểu rõ: quay lui **không** thay đổi độ phức tạp trong trường hợp xấu nhất. Nó vẫn là thuật toán vét cạn. Điều nó làm là bỏ qua những vùng chắc chắn không có nghiệm, và trong thực tế điều đó thường đủ để bài toán từ không giải nổi thành giải được trong tích tắc.
+
+## 4. Mô phỏng
+
+Ô vàng là ô đang thử, ô đỏ là ô vừa bị loại, vùng tô nhạt là các ô đã bị các quân hậu khống chế.
+
+<Viz name="queens" />
+
+Theo dõi ô đếm "Lần cắt nhánh" ở bên phải. Mỗi lần cắt ở cột sớm sẽ loại bỏ hàng nghìn cách đặt mà thuật toán không bao giờ phải thử tới. So sánh con số "Trạng thái đã thăm" ở cuối với tổng số cách đặt mù quáng để thấy khoảng cách.
+
+## 5. Pseudocode và Python
+
+```python
+def n_hau(n):
+    hang = []          # hang[c] = hàng của quân hậu ở cột c
+    dem = 0
+
+    def an_nhau(r, c):
+        for c2, r2 in enumerate(hang):
+            if r2 == r or abs(r2 - r) == abs(c2 - c):
+                return True         # cùng hàng hoặc cùng đường chéo
+        return False
+
+    def dat(c):
+        nonlocal dem
+        if c == n:
+            dem += 1                # đặt đủ n quân, đếm một nghiệm
+            return
+        for r in range(n):
+            if an_nhau(r, c):
+                continue            # CẮT NHÁNH: bỏ qua cả cây con
+            hang.append(r)          # chọn
+            dat(c + 1)              # đi tiếp
+            hang.pop()              # LÙI: gỡ lựa chọn ra
+
+    dat(0)
+    return dem
+
+print(n_hau(8))    # 92
+```
+
+Ba dòng `hang.append` / `dat` / `hang.pop` là khuôn mẫu chọn, đi tiếp, gỡ ra. Bạn sẽ viết đúng ba dòng này trong mọi bài quay lui, dù đề bài là sinh hoán vị, giải Sudoku hay tìm đường trong mê cung.
+
+Dòng `continue` sau `an_nhau` chính là chỗ tiết kiệm bốn tỉ phép thử.
+
+## 6. Điều đáng nhớ
+
+Quay lui là **liệt kê có kỷ luật**. Nó vét cạn, nhưng vét theo cách bỏ qua mọi vùng đã chắc chắn hỏng.
+
+Câu hỏi quyết định hiệu quả không phải "code thế nào" mà là "**phát hiện bế tắc sớm nhất ở đâu**". Cắt ở cột 2 tiết kiệm hơn cắt ở cột 7 hàng trăm nghìn lần. Với Sudoku, một cắt nhánh tốt là khác biệt giữa vài mili giây và vài giờ.

@@ -1,0 +1,104 @@
+---
+title: Cây đệ quy
+---
+
+## 1. Bài toán mở đầu
+
+> Hàm Fibonacci viết theo đúng định nghĩa. Tính `fib(50)` mất bao lâu?
+
+```python
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+```
+
+Đoạn code này đúng, ngắn, đẹp, và **không chạy nổi** với $n = 50$. Máy sẽ treo hàng chục phút.
+
+Câu hỏi thú vị: vì sao? Fibonacci thứ 50 chỉ khoảng 12 tỉ, một số bình thường. Vấn đề không nằm ở kích thước kết quả mà ở số lời gọi.
+
+## 2. Ý tưởng Toán
+
+Vẽ **cây đệ quy**: mỗi lời gọi là một nút, các lời gọi con là các nhánh.
+
+`fib(5)` gọi `fib(4)` và `fib(3)`. `fib(4)` gọi `fib(3)` và `fib(2)`. Để ý `fib(3)` đã xuất hiện hai lần, và mỗi lần nó lại sinh ra cả một cây con giống hệt nhau.
+
+Gọi $T(n)$ là số lời gọi để tính `fib(n)`. Ta có $T(n) = T(n-1) + T(n-2) + 1$, chính là hệ thức Fibonacci. Nghiệm của nó tăng theo cấp số nhân với công bội
+
+$$\varphi = \frac{1 + \sqrt5}{2} \approx 1{,}618$$
+
+Vậy $T(50) \approx \varphi^{50} \approx 2{,}5 \times 10^{10}$. Hai mươi lăm tỉ lời gọi cho một kết quả 12 tỉ. Cây đệ quy khổng lồ, nhưng số **giá trị khác nhau** cần tính chỉ có 51.
+
+Đây là chẩn đoán chính xác: cây đệ quy có $\varphi^n$ nút nhưng chỉ $n$ giá trị phân biệt. Toàn bộ phần còn lại là tính lại.
+
+<Note>
+Không phải đệ quy nào cũng bị vậy. Cây đệ quy của tìm kiếm nhị phân là một đường thẳng, mỗi mức một nút, tổng $\log n$ nút. Cây của sắp xếp trộn có $\log n$ mức, mỗi mức tổng chi phí $O(n)$, ra $O(n\log n)$. Đệ quy chỉ chậm khi các nhánh **chồng lấn**, tức khi cùng một bài toán con xuất hiện ở nhiều nhánh.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Cách đọc chi phí từ cây đệ quy gồm ba bước:
+
+1. **Cây sâu bao nhiêu mức?**
+2. **Mỗi mức có bao nhiêu nút?**
+3. **Mỗi nút tốn bao nhiêu ngoài các lời gọi con?**
+
+Nhân và cộng lại là ra tổng chi phí. Vài trường hợp hay gặp:
+
+| Hệ thức | Cây | Kết quả |
+| --- | --- | --- |
+| $T(n) = T(n/2) + O(1)$ | 1 nhánh, $\log n$ mức | $O(\log n)$ |
+| $T(n) = T(n-1) + O(1)$ | 1 nhánh, $n$ mức | $O(n)$ |
+| $T(n) = 2T(n/2) + O(n)$ | 2 nhánh, $\log n$ mức, mỗi mức $O(n)$ | $O(n\log n)$ |
+| $T(n) = 2T(n-1) + O(1)$ | 2 nhánh, $n$ mức | $O(2^n)$ |
+
+Hai dòng cuối rất đáng so sánh. Cả hai đều chia đôi thành 2 nhánh, nhưng một cái chia **kích thước** đôi còn một cái chỉ **giảm 1**. Khác biệt nhỏ đó là ranh giới giữa $n\log n$ và $2^n$.
+
+Khi phát hiện các nhánh chồng lấn, cách sửa là **ghi nhớ kết quả đã tính**, tiếng Anh gọi là memoization. Mỗi giá trị chỉ tính một lần, các lần sau tra bảng.
+
+## 4. Mô phỏng
+
+Chạy với `fib(6)` trước, đếm số lời gọi. Sau đó tích vào ô "Bật bảng ghi nhớ" và chạy lại.
+
+<Viz name="recursion-tree" />
+
+Cùng một bài toán, cùng một hàm, nhưng cây thứ hai nhỏ hơn hẳn. Các nút màu xanh là những lời gọi được trả lời ngay từ bảng, và mỗi nút xanh đó thay thế cho cả một cây con lẽ ra phải mọc ra ở đấy.
+
+## 5. Pseudocode và Python
+
+```python
+# Chậm: 2,5 x 10^10 lời gọi với n = 50
+def fib_cham(n):
+    if n <= 1:
+        return n
+    return fib_cham(n - 1) + fib_cham(n - 2)
+
+# Nhanh: thêm bảng ghi nhớ, còn đúng n lời gọi
+def fib_nhanh(n, bang=None):
+    if bang is None:
+        bang = {}
+    if n <= 1:
+        return n
+    if n in bang:
+        return bang[n]
+    bang[n] = fib_nhanh(n - 1, bang) + fib_nhanh(n - 2, bang)
+    return bang[n]
+```
+
+Ba dòng thêm vào biến $O(\varphi^n)$ thành $O(n)$. Với $n = 50$: từ hàng chục phút xuống dưới một phần nghìn giây.
+
+Python còn có cách viết gọn hơn, chỉ cần thêm một dòng phía trên hàm:
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n):
+    return n if n <= 1 else fib(n - 1) + fib(n - 2)
+```
+
+## 6. Điều đáng nhớ
+
+Cây đệ quy là công cụ để **nhìn thấy** chi phí của một hàm đệ quy thay vì đoán.
+
+Và nó cho một chẩn đoán rất cụ thể: nếu cây có nhiều nút hơn hẳn số bài toán con phân biệt, bạn đang tính lại. Cách chữa là ghi nhớ. Bài 19 sẽ đẩy ý này đi xa hơn, bằng cách bỏ đệ quy hẳn và điền thẳng vào bảng.

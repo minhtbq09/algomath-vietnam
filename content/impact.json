@@ -1,0 +1,51 @@
+[
+  {
+    "key": "web-reach",
+    "label": { "vi": "Học sinh sử dụng website", "en": "Students using the website" },
+    "target": { "vi": "Tối thiểu 100 trong giai đoạn đầu", "en": "At least 100 in the first phase" },
+    "actual": null,
+    "evidence": { "vi": "Analytics không dùng cookie và form người học", "en": "Cookieless analytics and learner form" }
+  },
+  {
+    "key": "workshop-attendance",
+    "label": { "vi": "Học sinh tham gia đầy đủ workshop", "en": "Students completing a workshop" },
+    "target": { "vi": "Tối thiểu 60", "en": "At least 60" },
+    "actual": null,
+    "evidence": { "vi": "Danh sách đăng ký và điểm danh", "en": "Registration and attendance list" }
+  },
+  {
+    "key": "completion",
+    "label": { "vi": "Hoàn thành nội dung chính", "en": "Completing the core activities" },
+    "target": { "vi": "70% người tham gia", "en": "70% of participants" },
+    "actual": null,
+    "evidence": { "vi": "Phiếu bài tập tại lớp", "en": "In-class worksheets" }
+  },
+  {
+    "key": "learning-gain",
+    "label": { "vi": "Tiến bộ giữa pre-test và post-test", "en": "Gain from pre-test to post-test" },
+    "target": { "vi": "Điểm trung bình tăng tối thiểu 20%", "en": "Mean score up by at least 20%" },
+    "actual": null,
+    "evidence": { "vi": "Hai bài kiểm tra ghép bằng mã ẩn danh", "en": "Two tests matched by anonymous code" }
+  },
+  {
+    "key": "satisfaction",
+    "label": { "vi": "Đánh giá buổi học từ 4/5 trở lên", "en": "Session rated 4/5 or higher" },
+    "target": { "vi": "80% người tham gia", "en": "80% of participants" },
+    "actual": null,
+    "evidence": { "vi": "Form phản hồi sau buổi học", "en": "Post-session feedback form" }
+  },
+  {
+    "key": "intent",
+    "label": { "vi": "Muốn học tiếp thuật toán hoặc CS", "en": "Intend to keep studying algorithms or CS" },
+    "target": { "vi": "60% người tham gia", "en": "60% of participants" },
+    "actual": null,
+    "evidence": { "vi": "Câu hỏi cuối form phản hồi", "en": "Final question on the feedback form" }
+  },
+  {
+    "key": "endorsement",
+    "label": { "vi": "Giáo viên hoặc đơn vị xác nhận", "en": "Teacher or school endorsements" },
+    "target": { "vi": "Ít nhất 2", "en": "At least 2" },
+    "actual": null,
+    "evidence": { "vi": "Thư xác nhận hoặc email", "en": "Confirmation letter or email" }
+  }
+]

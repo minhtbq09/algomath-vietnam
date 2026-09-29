@@ -1,0 +1,86 @@
+---
+title: Dynamic programming and states
+---
+
+## 1. Opening problem
+
+> On an $m \times n$ grid, travel from the top-left cell to the bottom-right, moving only right or down. How many paths are there?
+
+With no obstacles you solve it by counting: each path uses $m-1$ downward steps and $n-1$ rightward steps, so the count is $\binom{m+n-2}{m-1}$.
+
+Now block a few cells. The closed formula collapses immediately. But the idea behind it does not.
+
+## 2. The mathematical idea
+
+Let $f(r, c)$ be the number of paths from the top-left cell to cell $(r, c)$.
+
+Every path to $(r, c)$ ends with a final step, and that step comes either from above or from the left. Those two groups of paths **do not overlap**, since they differ in the last step. So by the addition principle:
+
+$$f(r, c) = f(r-1, c) + f(r, c-1)$$
+
+with $f(0,0) = 1$ and $f = 0$ on blocked cells.
+
+You have met this recurrence: it is Pascal's triangle, drawn differently. What is new is that we may add obstacles and extra conditions and the recurrence still works, where a closed formula would not.
+
+Two conditions make a problem solvable by dynamic programming, and both have already appeared:
+
+1. **Optimal substructure.** A solution to the big problem is assembled from solutions to smaller ones. This is exactly statement 2 in lesson 12 about shortest paths.
+2. **Overlapping subproblems.** The same subproblem appears on several branches. This is exactly the diagnosis in lesson 14 about the Fibonacci recursion tree.
+
+<Note>
+With condition 1 but not condition 2, plain recursion is usually fast enough and DP is unnecessary. With both, DP turns exponential cost into polynomial. Dynamic programming is not a new idea; it is **recursion plus not recomputing**.
+</Note>
+
+## 3. Turning it into an algorithm
+
+Designing a DP solution has four steps, and step 1 is the hard one:
+
+1. **Define the state.** What does $f(\dots)$ mean? State it as a clear sentence. If you cannot say what the state means, you do not yet understand the problem.
+2. **Write the recurrence.** How a large state is computed from smaller ones.
+3. **Identify the base cases.**
+4. **Choose the filling order.** It must guarantee that every cell a computation depends on is already filled.
+
+For the problem above: the state is "number of paths to cell $(r,c)$"; the recurrence is the sum of two cells; the base is $f(0,0)=1$; the order is top to bottom, left to right, since $(r,c)$ depends on the cell above and the cell to its left.
+
+There are two ways to write it, giving the same results:
+
+- **Top-down**, that is recursion plus a memo table. Closer to how you think, easier to write.
+- **Bottom-up**, that is filling a table with loops. Faster, with no stack-overflow risk.
+
+## 4. Simulation
+
+Follow each cell as it fills and watch the two source cells light up at every step.
+
+<Viz name="dp-grid" />
+
+Worth noticing: each cell lights up exactly once. Compare that with the Fibonacci recursion tree in lesson 14, where the same value was recomputed billions of times. That contrast is the whole meaning of dynamic programming.
+
+## 5. Pseudocode and Python
+
+```python
+def count_paths(grid):
+    R, C = len(grid), len(grid[0])
+    f = [[0] * C for _ in range(R)]
+
+    for r in range(R):
+        for c in range(C):
+            if grid[r][c] == '#':
+                f[r][c] = 0
+            elif r == 0 and c == 0:
+                f[r][c] = 1                       # base case
+            else:
+                above = f[r-1][c] if r > 0 else 0
+                left  = f[r][c-1] if c > 0 else 0
+                f[r][c] = above + left            # the recurrence
+    return f[R-1][C-1]
+```
+
+The complexity is $O(R \times C)$, each cell computed once.
+
+Note that the loop order is not arbitrary. Sweeping bottom-up would make cell $(r,c)$ need $f(r-1,c)$ before it exists. Filling order is step 4 in section 3, and skipping it is the most common mistake among people new to DP.
+
+## 6. What to take away
+
+Dynamic programming is often called the hardest topic in school-level algorithms. But the difficulty is not in the code; DP code is usually a few lines.
+
+The difficulty is in the question **what is the state**. And that is a mathematical question, not a programming one. Once you can say clearly what $f$ means, the recurrence usually appears by itself.

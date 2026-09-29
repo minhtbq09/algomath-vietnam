@@ -1,0 +1,86 @@
+---
+title: Quy hoạch động và trạng thái
+---
+
+## 1. Bài toán mở đầu
+
+> Trên lưới $m \times n$, đi từ ô góc trên trái tới ô góc dưới phải, mỗi bước chỉ được sang phải hoặc xuống dưới. Có bao nhiêu đường đi?
+
+Nếu lưới không có vật cản, bạn giải bằng tổ hợp: mỗi đường gồm $m-1$ bước xuống và $n-1$ bước phải, nên số đường là $\binom{m+n-2}{m-1}$.
+
+Bây giờ thêm vài ô bị chặn. Công thức tổ hợp sụp đổ ngay. Nhưng ý tưởng đằng sau nó thì không.
+
+## 2. Ý tưởng Toán
+
+Gọi $f(r, c)$ là số đường đi từ góc trên trái tới ô $(r, c)$.
+
+Mọi đường tới $(r, c)$ đều phải đi qua bước cuối cùng, và bước đó chỉ có thể từ ô trên hoặc ô trái. Hai nhóm đường này **không giao nhau**, vì chúng khác nhau ở bước cuối. Vậy theo quy tắc cộng:
+
+$$f(r, c) = f(r-1, c) + f(r, c-1)$$
+
+với $f(0,0) = 1$ và $f = 0$ ở ô bị chặn.
+
+Bạn đã gặp hệ thức này rồi: đó chính là tam giác Pascal, chỉ khác cách vẽ. Điều mới là ta có thể thêm vật cản, thêm điều kiện, và hệ thức vẫn dùng được, trong khi công thức tổ hợp đóng thì không.
+
+Hai điều kiện để một bài giải được bằng quy hoạch động, và cả hai đều đã xuất hiện ở các bài trước:
+
+1. **Cấu trúc con tối ưu.** Lời giải cho bài lớn ghép được từ lời giải các bài nhỏ. Đây chính là mệnh đề 2 ở bài 12 về đường đi ngắn nhất.
+2. **Bài toán con chồng lấn.** Cùng một bài toán con xuất hiện ở nhiều nhánh. Đây chính là chẩn đoán ở bài 14 về cây đệ quy Fibonacci.
+
+<Note>
+Nếu chỉ có điều kiện 1 mà không có điều kiện 2, đệ quy thường đã đủ nhanh, không cần DP. Nếu có cả hai, DP biến chi phí từ cấp số nhân xuống đa thức. Quy hoạch động không phải một ý tưởng mới, nó là **đệ quy cộng với việc không tính lại**.
+</Note>
+
+## 3. Chuyển thành thuật toán
+
+Thiết kế một lời giải DP gồm bốn bước, và bước 1 là bước khó nhất:
+
+1. **Định nghĩa trạng thái.** $f(\dots)$ nghĩa là gì? Phải phát biểu thành một câu tiếng Việt rõ ràng. Nếu bạn không nói được trạng thái nghĩa là gì, bạn chưa hiểu bài.
+2. **Viết hệ thức truy hồi.** Trạng thái lớn tính từ các trạng thái nhỏ hơn thế nào.
+3. **Xác định trường hợp cơ sở.**
+4. **Chọn thứ tự điền bảng.** Phải sao cho khi tính một ô, mọi ô nó phụ thuộc đã có sẵn.
+
+Với bài trên: trạng thái là "số đường đi tới ô $(r,c)$"; truy hồi là tổng hai ô; cơ sở là $f(0,0)=1$; thứ tự điền là từ trên xuống, trái sang phải, vì ô $(r,c)$ phụ thuộc ô trên và ô trái.
+
+Có hai kiểu viết, cho cùng kết quả:
+
+- **Từ trên xuống**, tức đệ quy cộng bảng ghi nhớ. Gần với cách nghĩ, dễ viết hơn.
+- **Từ dưới lên**, tức điền bảng bằng vòng lặp. Nhanh hơn, không lo tràn ngăn xếp.
+
+## 4. Mô phỏng
+
+Theo dõi từng ô được điền và chú ý hai ô nguồn sáng lên ở mỗi bước.
+
+<Viz name="dp-grid" />
+
+Điều đáng để ý: mỗi ô chỉ sáng lên đúng một lần. So với cây đệ quy Fibonacci ở bài 14, nơi cùng một giá trị bị tính lại hàng tỉ lần, đây chính là toàn bộ ý nghĩa của quy hoạch động.
+
+## 5. Pseudocode và Python
+
+```python
+def dem_duong_di(luoi):
+    R, C = len(luoi), len(luoi[0])
+    f = [[0] * C for _ in range(R)]
+
+    for r in range(R):
+        for c in range(C):
+            if luoi[r][c] == '#':
+                f[r][c] = 0
+            elif r == 0 and c == 0:
+                f[r][c] = 1                       # trường hợp cơ sở
+            else:
+                tren  = f[r-1][c] if r > 0 else 0
+                trai  = f[r][c-1] if c > 0 else 0
+                f[r][c] = tren + trai             # hệ thức truy hồi
+    return f[R-1][C-1]
+```
+
+Độ phức tạp $O(R \times C)$, mỗi ô tính đúng một lần.
+
+Chú ý thứ tự hai vòng lặp không phải tuỳ ý. Nếu duyệt từ dưới lên, ô $(r,c)$ sẽ cần $f(r-1,c)$ mà giá trị đó chưa được tính. Thứ tự điền bảng là bước 4 trong quy trình ở mục 3, và bỏ qua nó là lỗi hay gặp nhất khi mới học DP.
+
+## 6. Điều đáng nhớ
+
+Quy hoạch động thường bị coi là chủ đề khó nhất trong thuật toán phổ thông. Nhưng phần khó không nằm ở code, code DP thường chỉ vài dòng.
+
+Phần khó nằm ở **câu hỏi trạng thái là gì**. Và đó là một câu hỏi toán học, không phải câu hỏi lập trình. Khi bạn phát biểu được $f$ nghĩa là gì bằng một câu rõ ràng, hệ thức truy hồi thường tự hiện ra.

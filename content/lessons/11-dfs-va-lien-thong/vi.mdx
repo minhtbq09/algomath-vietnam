@@ -1,0 +1,85 @@
+---
+title: DFS và thành phần liên thông
+---
+
+## 1. Bài toán mở đầu
+
+> Một hòn đảo được vẽ thành lưới ô vuông, ô đất và ô nước. Hai ô đất kề nhau theo cạnh thì thuộc cùng một mảnh đất. Hỏi có bao nhiêu mảnh đất tách rời?
+
+Bạn giải bài này trong đầu bằng cách: chọn một ô đất chưa đánh dấu, tô màu toàn bộ mảnh chứa nó, đếm 1, rồi tìm ô đất chưa tô tiếp theo.
+
+Thao tác "tô toàn bộ mảnh chứa nó" chính là DFS.
+
+## 2. Ý tưởng Toán
+
+Quan hệ "hai ô thuộc cùng một mảnh đất" có ba tính chất:
+
+- **Phản xạ.** Mọi ô cùng mảnh với chính nó.
+- **Đối xứng.** Nếu $u$ cùng mảnh với $v$ thì ngược lại cũng đúng.
+- **Bắc cầu.** Nếu $u$ cùng mảnh $v$ và $v$ cùng mảnh $w$ thì $u$ cùng mảnh $w$.
+
+Ba tính chất này định nghĩa một **quan hệ tương đương**, và mọi quan hệ tương đương đều chia tập hợp thành các **lớp tương đương** rời nhau, phủ kín tập hợp.
+
+Trong ngôn ngữ đồ thị, các lớp đó gọi là **thành phần liên thông**. Câu hỏi "có bao nhiêu mảnh đất" trở thành "có bao nhiêu lớp tương đương", và điều ta cần là một cách liệt kê từng lớp.
+
+## 3. Chuyển thành thuật toán
+
+Để liệt kê một lớp, ta cần một cách đi từ một đỉnh tới **mọi** đỉnh đến được từ nó. Cách nào cũng được, miễn không bỏ sót và không lặp vô hạn.
+
+BFS ở bài 10 làm được việc đó. DFS cũng làm được, và khác biệt duy nhất giữa hai thuật toán là **một dòng code**:
+
+| | Lấy phần tử nào ra | Hình dạng duyệt |
+| --- | --- | --- |
+| BFS | vào trước ra trước, hàng đợi | lan đều theo lớp |
+| DFS | vào sau ra trước, ngăn xếp | lao sâu theo một nhánh |
+
+Vì bài đếm mảnh đất chỉ cần biết *đến được hay không*, chứ không cần khoảng cách, nên cả hai đều đúng. Người ta thường chọn DFS vì viết đệ quy ngắn hơn.
+
+<Note>
+Điểm quan trọng cần phân biệt rõ: DFS **không** cho khoảng cách ngắn nhất. Con số ghi trên ô trong mô phỏng dưới đây là *thứ tự thăm*, hoàn toàn khác với con số của BFS. Dùng nhầm DFS cho bài tìm đường ngắn nhất là lỗi rất hay gặp và rất khó phát hiện, vì chương trình vẫn chạy, vẫn ra kết quả, chỉ là kết quả sai.
+</Note>
+
+## 4. Mô phỏng
+
+Đây là cùng một mê cung với mô phỏng BFS ở bài 10. Chạy cả hai rồi so sánh hình dạng vùng đã thăm.
+
+<Viz name="dfs" />
+
+BFS tạo ra các vòng đồng tâm quanh điểm xuất phát. DFS tạo ra một đường ngoằn ngoèo dài. Cùng một đồ thị, cùng một cấu trúc vòng lặp, đổi hàng đợi thành ngăn xếp là ra hai bức tranh khác hẳn.
+
+## 5. Pseudocode và Python
+
+Bản đệ quy, ngắn và tự nhiên nhất:
+
+```python
+def dfs(luoi, r, c, da_tham):
+    if (r, c) in da_tham or luoi[r][c] == '#':
+        return
+    da_tham.add((r, c))
+    for dr, dc in ((-1,0), (0,1), (1,0), (0,-1)):
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < len(luoi) and 0 <= nc < len(luoi[0]):
+            dfs(luoi, nr, nc, da_tham)
+
+def dem_manh_dat(luoi):
+    da_tham = set()
+    so_manh = 0
+    for r in range(len(luoi)):
+        for c in range(len(luoi[0])):
+            if luoi[r][c] == '.' and (r, c) not in da_tham:
+                dfs(luoi, r, c, da_tham)
+                so_manh += 1
+    return so_manh
+```
+
+Vòng lặp ngoài trong `dem_manh_dat` chính là chỗ thể hiện tính chất lớp tương đương: mỗi lần gặp một ô chưa thăm là gặp một lớp mới.
+
+Một cảnh báo thực tế: bản đệ quy có thể tràn ngăn xếp khi lưới lớn, chẳng hạn 1000×1000 với toàn ô đất, vì độ sâu đệ quy lên tới một triệu. Khi đó phải viết bản dùng ngăn xếp tường minh như trong mô phỏng ở trên. Bài 14 sẽ nói kỹ hơn về chi phí của đệ quy.
+
+## 6. Điều đáng nhớ
+
+Hai bài học tách rời nhau trong bài này.
+
+Thứ nhất, **đếm thành phần liên thông là đếm lớp tương đương**, một cấu trúc bạn đã biết từ Toán.
+
+Thứ hai, **BFS và DFS chỉ khác nhau ở cấu trúc dữ liệu**, nhưng khác biệt đó quyết định thông tin nào được bảo toàn. Chọn cấu trúc dữ liệu không phải chuyện phong cách, nó là chuyện đúng sai.
