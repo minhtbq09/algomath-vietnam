@@ -1,151 +1,99 @@
-# AlgoMath Vietnam
+Go to vercel.com, choose Import Project and point it at the repository. Vercel detects Next.js by itself. No configuration, no environment variables. The site sits at the domain root, so there is no sub-path to worry about.
 
-Website học liệu miễn phí đưa tư duy Olympic Toán vào Khoa học Máy tính, dành cho học sinh lớp 9 đến 11. Song ngữ Việt và Anh.
+Vercel is slightly simpler and gives a tidier URL. GitHub Pages keeps the source and the live site in one place, which is convenient if you want to manage everything from a single account.
 
-Trang chủ tiếng Việt nằm ở `/vi/`, tiếng Anh ở `/en/`.
+## Editing content
 
-## Chạy trên máy
+This is the part you will touch regularly. It all lives under `content/` and needs no React knowledge.
 
-Cần Node.js phiên bản 20 trở lên.
-
-```bash
-npm install
-npm run dev      # mở http://localhost:3000
-npm run build    # xuất trang tĩnh vào thư mục out/
-```
-
-## Đưa lên mạng
-
-Site xuất ra HTML tĩnh hoàn toàn, không server, không cơ sở dữ liệu, không tài khoản người dùng. Chi phí vận hành bằng 0. Có hai cách đăng, chọn một.
-
-### Cách 1: GitHub Pages
-
-Repo đã có sẵn workflow tại `.github/workflows/deploy.yml`. Các bước:
-
-1. Đẩy mã nguồn lên GitHub, nhánh `main`
-2. Vào repo, mục **Settings** rồi **Pages**
-3. Ở phần **Source**, chọn **GitHub Actions** thay vì Deploy from a branch
-4. Đợi khoảng 2 phút, địa chỉ site hiện ra ngay trên trang đó
-
-Từ đó mỗi lần push lên `main`, site tự build lại.
-
-Workflow tự nhận biết repo được phục vụ ở đâu:
-
-| Tên repo | Địa chỉ site | Đường dẫn gốc |
-| --- | --- | --- |
-| `<tài-khoản>.github.io` | `https://<tài-khoản>.github.io/` | không có |
-| tên bất kỳ khác | `https://<tài-khoản>.github.io/<tên-repo>/` | `/<tên-repo>` |
-
-Bạn không cần làm gì với bảng này, workflow tự xử lý.
-
-**Muốn build thử ở máy đúng như trên GitHub Pages** (thay `algomath-vietnam` bằng tên repo thật):
-
-```bash
-# Windows PowerShell
-$env:NEXT_PUBLIC_BASE_PATH="/algomath-vietnam"; npm run build
-
-# macOS hoặc Linux
-NEXT_PUBLIC_BASE_PATH=/algomath-vietnam npm run build
-```
-
-Hai file bắt buộc phải có, đừng xoá: `public/.nojekyll` (nếu thiếu, GitHub bỏ qua thư mục `_next` và site mất sạch CSS lẫn JavaScript) và `.github/workflows/deploy.yml`.
-
-### Cách 2: Vercel
-
-Vào vercel.com, chọn Import Project và trỏ vào repo. Vercel tự nhận diện Next.js, không cần cấu hình gì, không cần biến môi trường nào. Site nằm ở gốc tên miền nên không có chuyện đường dẫn con.
-
-Vercel dễ hơn một chút và cho tên miền gọn hơn. GitHub Pages thì gộp mã nguồn và website vào một chỗ, tiện khi muốn chỉ dùng một tài khoản duy nhất.
-
-## Sửa nội dung
-
-Đây là phần bạn sẽ đụng tới thường xuyên. Toàn bộ nằm trong thư mục `content/`, không cần biết React.
-
-| Muốn sửa gì | Sửa file nào |
+| To change | Edit |
 | --- | --- |
-| Nội dung một bài học | `content/lessons/<slug>/vi.mdx` và `en.mdx` |
-| Bài tập | `content/exercises/*.json` |
-| Thông tin workshop | `content/workshops/workshops.json` |
-| Số liệu tác động | `content/impact.json` |
-| Đội ngũ, cố vấn, liên hệ | `content/about.json` |
-| Tên bài, thứ tự, cặp Toán ↔ thuật toán | `src/lib/curriculum.ts` |
-| Chữ trên nút, menu, tiêu đề trang | `src/i18n/dictionary.ts` |
+| A lesson | `content/lessons/<slug>/vi.mdx` and `en.mdx` |
+| Exercises | `content/exercises/*.json` |
+| Workshop details | `content/workshops/workshops.json` |
+| Impact figures | `content/impact.json` |
+| Team, advisors, contact | `content/about.json` |
+| Lesson titles, order, maths-to-algorithm pairs | `src/lib/curriculum.ts` |
+| Button labels, menus, page headings | `src/i18n/dictionary.ts` |
+| Exercise topic names in English | `src/i18n/topics.ts` |
 
-Xem `docs/them-bai-hoc.md` để biết cách thêm một bài học mới.
+See [docs/adding-a-lesson.md](docs/adding-a-lesson.md) for how to add a new lesson.
 
-### Bản tiếng Anh chưa viết thì sao
+Lesson files are MDX, meaning ordinary Markdown with a few extras: LaTeX between dollar signs for mathematics, `<Note>…</Note>` for a highlighted aside, and `<Viz name="bfs" />` to embed a simulation.
 
-Không sao. Nếu thiếu file `en.mdx`, trang tiếng Anh tự hiển thị nội dung tiếng Việt kèm một dòng ghi chú. Website không bao giờ lỗi 404 vì thiếu bản dịch, nên bạn có thể viết tiếng Việt trước cho đủ 20 bài rồi dịch sau.
+### Missing translations
 
-## Cấu trúc mã nguồn
+If a lesson has no `en.mdx`, the English page falls back to the Vietnamese text with a short notice, rather than returning a 404. All 20 lessons currently have both, but the fallback is still there if you add a lesson and translate it later.
+
+## Project layout
 
 ```
-content/          nội dung: bài học, bài tập, workshop, số liệu
-src/algorithms/   logic thuật toán thuần, không dính giao diện
-src/components/   giao diện dùng chung và các mô phỏng
-src/app/          các trang, theo cấu trúc [locale]/...
-src/i18n/         chuỗi giao diện hai ngôn ngữ
-src/lib/          đọc file nội dung, dữ liệu chương trình
+content/          lessons, exercises, workshops, impact data
+src/algorithms/   pure algorithm logic, no UI
+src/components/   shared interface and the simulations
+src/app/          pages, organised as [locale]/...
+src/i18n/         interface strings in both languages
+src/lib/          content loading, curriculum data, path helpers
 ```
 
-Thư mục `src/algorithms/` được tách riêng có chủ đích: nó chỉ chứa thuật toán thuần, không import React, không biết gì về màu sắc hay bố cục. Cố vấn kỹ thuật có thể đọc và kiểm tra tính đúng đắn ở đây mà không cần biết lập trình web.
+`src/algorithms/` is deliberately isolated. It contains algorithm logic only: no React imports, no knowledge of colours or layout. A technical advisor can read and verify correctness there without knowing any web development, and the files are straightforward to unit-test.
 
-## Cách các mô phỏng hoạt động
+## How the simulations work
 
-Mỗi thuật toán không tự chạy trên màn hình. Nó chạy trước một lần và sinh ra một danh sách frame bất biến, mỗi frame là ảnh chụp trạng thái đầy đủ tại một bước kèm câu giải thích song ngữ. Component `AlgorithmPlayer` chỉ việc đổi chỉ số frame.
+An algorithm never runs live on screen. It runs once up front and produces an immutable list of frames. Each frame is a complete snapshot of the state at one step, with a bilingual sentence explaining that step. The `AlgorithmPlayer` component simply changes which frame index is displayed.
 
-Nhờ vậy nút Bước trước chỉ là `index - 1`, không cần chạy ngược thuật toán, và cả 10 mô phỏng hành xử giống hệt nhau.
+Three consequences:
 
-Thêm một mô phỏng mới cần đúng ba việc:
+- The Back button is `index - 1`, free, with no need to run anything in reverse
+- All 10 simulations behave identically, so students learn the controls once
+- Adding an eleventh costs one generator function and one renderer
 
-1. Viết `src/algorithms/<ten>.ts` sinh frame
-2. Viết `src/components/viz/<Ten>Viz.tsx` để vẽ một frame
-3. Thêm một dòng vào `VIZ_REGISTRY` trong `src/components/viz/index.tsx`
+To add a simulation:
 
-Sau đó nhúng vào bài học bằng `<Viz name="<ten>" />`.
+1. Write `src/algorithms/<name>.ts` producing the frames
+2. Write `src/components/viz/<Name>Viz.tsx` drawing a single frame
+3. Add one entry to `VIZ_REGISTRY` in `src/components/viz/index.tsx`
 
-Bảng màu trạng thái khai báo tại `STATE_COLOR` trong `src/algorithms/types.ts`. Đổi ở đó là đổi cho cả 10 mô phỏng cùng lúc.
+Then embed it in any lesson with `<Viz name="<name>" />`.
 
-## Tình trạng nội dung
+The state colour palette is declared once, as `STATE_COLOR` in `src/algorithms/types.ts`. Changing it there changes all 10 simulations at once.
 
-| Hạng mục | Đã có | Ghi chú |
+## Content status
+
+| Item | Done | Notes |
 | --- | --- | --- |
-| Bài học tiếng Việt | 20 / 20 | đủ |
-| Bài học tiếng Anh | 20 / 20 | đủ |
-| Mô phỏng | 10 / 10 | đủ |
-| Bài tập | 44 / 60 | còn thiếu cho các bài 08, 09, 12, 14, 15, 18 |
+| Vietnamese lessons | 20 / 20 | complete |
+| English lessons | 20 / 20 | complete |
+| Simulations | 10 / 10 | complete |
+| Exercises | 44 / 60 | lessons 08, 09, 12, 14, 15 and 18 still have none |
 
-Bài tập song ngữ sẵn. Nhãn chủ đề bài tập dịch trong `src/i18n/topics.ts`, chỉ cần sửa khi bạn đặt ra một chủ đề mới.
+## Measuring impact
 
-## Đo tác động
+The website collects no personal data. Sign-ups and surveys run through external Google Forms.
 
-Website không thu thập bất kỳ thông tin cá nhân nào. Đăng ký và khảo sát dùng Google Forms bên ngoài.
+For pre-tests and post-tests, use an anonymous code pre-printed on the sheet, such as `W1-042`, rather than asking for names. The two papers can then be matched to measure each student's progress without storing anyone's identity. This is worth stating explicitly in the impact report; it is a deliberate research-ethics choice, not an oversight.
 
-Với pre-test và post-test, dùng mã ẩn danh in sẵn trên phiếu, ví dụ `W1-042`, thay vì hỏi họ tên. Hai bài kiểm tra ghép được với nhau qua mã đó, nên tính được mức tiến bộ của từng học sinh mà không lưu danh tính ai cả.
+For visitor counts, enable Vercel Analytics from the Vercel dashboard, or add Umami. Neither uses cookies.
 
-Để đo lượt truy cập, bật Vercel Analytics trong bảng điều khiển Vercel hoặc gắn Umami. Cả hai đều không dùng cookie.
+## Team
 
-## Đội ngũ
+Team and advisor details live in `content/about.json` and appear on the About page. Fill in the real names where the file still reads `TÊN NGƯỜI HỖ TRỢ KỸ THUẬT` and `CHƯA XÁC NHẬN` before publishing.
 
-Thông tin đội ngũ và cố vấn nằm trong `content/about.json` và hiển thị ở trang Về dự án. Nhớ điền tên thật vào các ô còn ghi `TÊN NGƯỜI HỖ TRỢ KỸ THUẬT` và `CHƯA XÁC NHẬN` trước khi công bố.
+## Tooling note
 
-## Ghi chú về công cụ
+The website infrastructure, simulation engine and interface were developed with the help of AI tools. The curriculum, lessons and exercises were written by the project team, who are responsible for their content.
 
-Phần hạ tầng website, engine mô phỏng và giao diện được phát triển với sự hỗ trợ của công cụ AI. Nội dung chương trình, bài học và bài tập do đội ngũ dự án biên soạn và chịu trách nhiệm.
+If this project is submitted to a competition or programme with rules about AI tool use, read those rules and disclose accordingly.
 
-Nếu dự án được nộp cho một cuộc thi hoặc chương trình có quy định về việc sử dụng công cụ AI, hãy đọc quy định đó và khai báo theo đúng yêu cầu.
+## Dependency security
 
-## Giấy phép
-
-Nội dung học liệu dùng cho mục đích giáo dục phi lợi nhuận. Giáo viên được dùng lại trong lớp mà không cần xin phép.
-
-## Cập nhật bảo mật thư viện
-
-Các phiên bản trong `package.json` đã được cập nhật theo khuyến cáo bảo mật mới nhất tại thời điểm bàn giao. Nếu `npm install` báo cảnh báo về phiên bản Next.js trong tương lai, chạy:
+The versions in `package.json` were current with published security advisories at handover. If `npm install` later warns that a dependency is deprecated or vulnerable, upgrade that package to its latest patch release and rebuild:
 
 ```bash
-npx fix-react2shell-next --fix
-npm install
+npm install <package>@latest
 npm run build
 ```
 
-Ba cảnh báo `high` còn lại của `npm audit` đến từ `postcss` và `sharp`, hai thư viện chỉ chạy lúc build trên máy bạn, không nằm trong trang tĩnh đã xuất ra. Không cần xử lý và **không nên** chạy `npm audit fix --force`, vì lệnh đó nâng Next.js lên phiên bản major và có thể làm hỏng dự án.
+Three remaining `high` findings from `npm audit` come from `postcss` and `sharp`. Both run only at build time on your own machine and appear nowhere in the exported static site, so there is no attack surface. Leave them.
+
+Do **not** run `npm audit fix --force`. That command upgrades Next.js across major versions and will likely break the build.
