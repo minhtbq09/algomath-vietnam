@@ -1,48 +1,26 @@
 {
   "intro": {
-    "vi": "AlgoMath Vietnam là dự án giáo dục phi lợi nhuận, xây dựng học liệu miễn phí bằng tiếng Việt và tiếng Anh cho học sinh lớp 9 đến 11 yêu Toán nhưng chưa biết bắt đầu học thuật toán từ đâu. Toàn bộ bài học, mô phỏng và bài tập đều mở, giáo viên có thể dùng lại trong lớp mà không cần xin phép.",
-    "en": "AlgoMath Vietnam is a non-profit education project building free Vietnamese and English learning material for students in grades 9 to 11 who love maths but do not know where to start with algorithms. Every lesson, simulation and exercise is open, and teachers are free to reuse them in class."
+    "vi": "AlgoMath Vietnam là dự án giáo dục phi lợi nhuận do Trịnh Bùi Quang Minh sáng lập và phát triển, cung cấp học liệu miễn phí bằng tiếng Việt và tiếng Anh cho học sinh lớp 9 đến 11 yêu Toán và muốn bắt đầu tìm hiểu thuật toán. Thông qua các bài học, mô phỏng tương tác và bài tập thực hành, dự án giúp học sinh kết nối kiến thức Toán với tư duy thuật toán. Toàn bộ học liệu được cung cấp miễn phí, giáo viên có thể sử dụng lại trong lớp mà không cần xin phép.",
+    "en": "AlgoMath Vietnam is a non-profit education project founded and developed by Trịnh Bùi Quang Minh. It provides free learning resources in Vietnamese and English for students in grades 9 to 11 who enjoy mathematics and want to explore algorithms. Through lessons, interactive simulations and practical exercises, the project helps students connect mathematical knowledge with algorithmic thinking. All learning resources are free, and teachers can reuse them in class without requesting permission."
   },
   "team": [
     {
       "name": "Trịnh Bùi Quang Minh",
-      "role": { "vi": "Sáng lập, phụ trách chương trình Toán", "en": "Founder, Mathematics Curriculum Lead" },
+      "role": {
+        "vi": "Người sáng lập và phát triển dự án",
+        "en": "Founder & Project Developer"
+      },
       "detail": {
-        "vi": "Định hướng dự án, thiết kế chương trình 20 bài, viết bài học và bài tập, giảng dạy workshop và tổng hợp báo cáo tác động.",
-        "en": "Sets the direction, designs the 20-lesson curriculum, writes the lessons and exercises, teaches the workshops and compiles the impact report."
-      }
-    },
-    {
-      "name": "TÊN NGƯỜI HỖ TRỢ KỸ THUẬT",
-      "role": { "vi": "Hỗ trợ phát triển web", "en": "Web Development Support" },
-      "detail": {
-        "vi": "Xây dựng khung website, engine mô phỏng và giao diện; hỗ trợ kiểm thử và triển khai.",
-        "en": "Builds the website framework, the simulation engine and the interface; supports testing and deployment."
+        "vi": "Minh là thành viên duy nhất của AlgoMath Vietnam, trực tiếp phụ trách toàn bộ quá trình xây dựng và vận hành dự án: định hướng, thiết kế chương trình 20 bài, biên soạn học liệu và bài tập, phát triển website và hệ thống mô phỏng tương tác, kiểm thử và triển khai. Minh cũng phụ trách giảng dạy workshop, tiếp nhận phản hồi của người học và giáo viên, cải tiến học liệu và tổng hợp báo cáo tác động.",
+        "en": "As the sole member of AlgoMath Vietnam, Minh manages every aspect of the project, from its direction and 20-lesson curriculum to writing learning materials and exercises, developing the website and interactive simulations, testing and deployment. Minh also teaches workshops, gathers feedback from students and teachers, improves the learning resources and compiles impact reports."
       }
     }
   ],
-  "advisors": [
-    {
-      "name": "CHƯA XÁC NHẬN",
-      "role": { "vi": "Cố vấn Toán", "en": "Mathematics Advisor" },
-      "detail": {
-        "vi": "Góp ý tính chính xác, tính sư phạm và mức độ phù hợp với học sinh phổ thông.",
-        "en": "Reviews accuracy, teaching approach and suitability for secondary students."
-      }
-    },
-    {
-      "name": "CHƯA XÁC NHẬN",
-      "role": { "vi": "Cố vấn thuật toán", "en": "Technical Advisor" },
-      "detail": {
-        "vi": "Kiểm tra thuật toán, code, độ phức tạp và tính đúng đắn của mô phỏng.",
-        "en": "Checks the algorithms, the code, the complexity claims and the correctness of each simulation."
-      }
-    }
-  ],
-  "repoUrl": "https://github.com/TEN-TAI-KHOAN/algomath-vietnam",
-  "contactEmail": "algomath.vietnam@example.com",
+  "advisors": [],
+  "repoUrl": "https://github.com/minhtbq09/algomath-vietnam",
+  "contactEmail": "quangminh060609@gmail.com",
   "toolingNote": {
-    "vi": "Ghi chú về công cụ: phần hạ tầng website, engine mô phỏng và giao diện được phát triển với sự hỗ trợ của công cụ AI. Nội dung chương trình, bài học và bài tập do đội ngũ dự án biên soạn và chịu trách nhiệm về nội dung.",
-    "en": "Tooling note: the website infrastructure, simulation engine and interface were developed with the help of AI tools. The curriculum, lessons and exercises were written by the project team, who are responsible for their content."
+    "vi": "Cảm ơn đã theo dõi",
+    "en": "Thank you for following"
   }
 }
